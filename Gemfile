@@ -45,8 +45,8 @@ gem "devise"
 # Background jobs
 gem "sidekiq"
 
-# OpenRouter LLM client (kompatybilny z OpenAI SDK)
-gem "ruby-openai"
+# LLM client — multi-provider, używamy z OpenRouter
+gem "ruby_llm"
 
 # Env vars from .env
 gem "dotenv-rails", groups: [:development, :test]
