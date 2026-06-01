@@ -1,0 +1,67 @@
+@startuml SequenceDiagram_SingleRound_CollectOpinions
+title Sequence Diagram - Single-Round + Council: zbieranie opinii prywatnych (round=0)
+
+skinparam responseMessageBelowArrow true
+skinparam sequenceMessageAlign center
+
+actor User
+participant "CollectOpinionJob" as Col <<asynchronous>>
+participant "OpinionCollectorService" as Svc
+participant "DeliberateJob" as Del <<asynchronous>>
+database "DB" as DB
+participant "LLM API" as LLM <<external>>
+
+note over User, LLM
+  Kontynuacja Diagramu 1 (create-session). Po wygenerowaniu wszystkich
+  Person system uruchamia fan-out N x CollectOpinionJob, bez interakcji
+  użytkownika. User pozostaje na widoku statusu i obserwuje postęp.
+
+  Ten diagram pokazuje fazę zbierania opinii PRYWATNYCH (round=0) -
+  każda Persona wydaje opinię niezależnie, bez wiedzy o opiniach innych.
+  Faza deliberacji (round=1) i synteza chairmana pokazane są na
+  diagramie deliberate-and-synthesize.puml.
+end note
+
+== 1. Zbieranie opinii prywatnych (równolegle, w tle) ==
+
+note over Col
+  N asynchronicznych zadań wykonywanych jest niezależnie i równolegle.
+  Poniżej przepływ pojedynczego zadania.
+end note
+
+activate Col
+Col -> DB : load Persona + Product
+DB --> Col : persona, product
+
+Col -> Svc : call(persona, product)
+activate Svc
+
+Svc -> LLM : prompt: profil persony + opis produktu\n-> ocena, plusy, minusy, cytat
+LLM --> Svc : opinia (JSON)
+
+Svc --> Col : opinion_data
+deactivate Svc
+
+Col -> DB : save Opinion(persona, round=0,\nrating, pros, cons, quote)
+DB --> Col : opinion(round=0)
+
+Col ->> User : aktualizacja postępu:\n"k / N opinii prywatnych zebranych"
+
+Col -> DB : all_opinions_finished? (round=0)
+DB --> Col : tak / nie
+
+opt to ostatnia opinia z próby (barrier sync)
+  Col -> DB : update FocusGroup.status = deliberating
+  Col -> DB : update FocusGroup.deliberation_started_at = now
+  Col ->> User : aktualizacja statusu:\n"deliberacja: persony czytają cudze opinie..."
+  Col -> Del : enqueue N x DeliberateJob\n(jedna na każdą Personę, fan-out)
+end
+deactivate Col
+
+note over User
+  Faza druga (deliberacja + synteza) startuje automatycznie.
+  User nadal nie wykonuje akcji, obserwuje widok statusu.
+  Dalszy przebieg: deliberate-and-synthesize.puml.
+end note
+
+@enduml

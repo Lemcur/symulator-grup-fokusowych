@@ -1,0 +1,107 @@
+@startuml SequenceDiagram_SingleRound_DeliberateAndSynthesize
+title Sequence Diagram - Single-Round: deliberacja person i synteza chairmana
+
+skinparam responseMessageBelowArrow true
+skinparam sequenceMessageAlign center
+
+actor User
+participant "DeliberateJob" as Del <<asynchronous>>
+participant "DeliberationService" as DelSvc
+participant "ChairmanSynthesisJob" as Syn <<asynchronous>>
+participant "ChairmanSynthesisService" as SynSvc
+database "DB" as DB
+participant "LLM API" as LLM <<external>>
+
+note over User, LLM
+  Kontynuacja diagramu collect-opinions. Po zakończeniu wszystkich
+  CollectOpinionJob system uruchamia fan-out N x DeliberateJob (po jednym
+  na każdą Personę), bez interakcji użytkownika. User pozostaje na widoku
+  statusu i obserwuje postęp.
+end note
+
+== 1. Deliberacja (N równoległych jobów, R=1 runda) ==
+
+note over Del
+  N asynchronicznych zadań wykonywanych jest niezależnie i równolegle.
+  Poniżej przepływ pojedynczego zadania dla persony X.
+end note
+
+activate Del
+Del -> DB : load Opinion(persona=X, round=0)
+DB --> Del : own_opinion
+
+Del -> DB : load Opinion(persona!=X, round=0)\n[anti-anchoring: bez własnej]
+DB --> Del : peer_opinions (N-1)
+
+Del -> DB : load Persona(X) + Persony(others)\n[profile do etykietowania opinii]
+DB --> Del : personas
+
+Del -> DelSvc : call(persona, own_opinion, peer_opinions)
+activate DelSvc
+
+DelSvc -> LLM : prompt:\n- profil persony X\n- "Twoja opinia: ..."\n- "Inni powiedzieli: [N-1 opinii\n  z etykietami demograficznymi]"\n- "Czy chcesz zrewidować?"
+LLM --> DelSvc : JSON: {rating, pros, cons, quote,\nrevised: bool, revision_rationale}
+
+DelSvc --> Del : revised_opinion
+deactivate DelSvc
+
+alt revised = true
+  Del -> DB : save Opinion(persona=X, round=1,\nrevised=true, rationale, nowy rating/pros/cons)
+else revised = false
+  Del -> DB : save Opinion(persona=X, round=1,\nrevised=false, rationale,\nkopia round=0)
+end
+DB --> Del : opinion(round=1)
+
+Del ->> User : aktualizacja postępu:\n"k / N person zakończyło deliberację"
+
+Del -> DB : all_deliberations_finished?
+DB --> Del : tak / nie
+
+opt to ostatnia deliberacja z próby
+  Del -> DB : update FocusGroup.status = synthesizing
+  Del ->> User : aktualizacja statusu:\n"chairman pisze rekomendację..."
+  Del -> Syn : enqueue(focus_group.id)
+end
+deactivate Del
+
+== 2. Synteza rekomendacji (chairman, asynchronicznie) ==
+
+activate Syn
+Syn -> DB : load FocusGroup + Chairman
+DB --> Syn : focus_group, chairman
+
+Syn -> DB : load Opinion(round=0) + Opinion(round=1)\nwszystkich person
+DB --> Syn : opinions (2N rekordów)
+
+Syn -> DB : load Persony (do segmentacji)
+DB --> Syn : personas
+
+Syn -> SynSvc : call(focus_group, chairman)
+activate SynSvc
+
+SynSvc -> LLM : prompt (model = chairman.model):\n- rola: "moderator-analityk badań jakościowych"\n- materiał: 2N opinii (round 0 i round 1) + persony\n- zadanie: zsyntetyzuj, zwracając uwagę na:\n  * points of agreement after deliberation\n  * strong arguments that convinced others\n  * areas where council remains divided\n  * 3 mocne strony, 3 słabe, rozkład ocen, segmenty
+LLM --> SynSvc : Recommendation JSON
+
+SynSvc --> Syn : recommendation
+deactivate SynSvc
+
+Syn -> DB : save Recommendation(\nstrengths, weaknesses, rating_distribution,\nsegment_insights, agreement_points,\npersuasive_arguments, persistent_divisions)
+DB --> Syn : recommendation
+
+Syn -> DB : update FocusGroup.status = completed
+DB --> Syn : ok
+
+Syn ->> User : finalna aktualizacja:\n"rekomendacja gotowa"
+deactivate Syn
+
+note over User
+  User otwiera widok rekomendacji:
+  3 mocne strony, 3 słabe strony,
+  rozkład ocen, podział na segmenty,
+  oraz sekcje wynikające z deliberacji:
+  - na czym zgodzili się respondenci
+  - które argumenty zmieniły zdanie innych
+  - gdzie pozostają trwałe podziały
+end note
+
+@enduml

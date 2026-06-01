@@ -1,0 +1,233 @@
+@startuml ClassDiagram_SingleRound_DeliberateSynthesize
+title Class Diagram - Single-Round + Deliberate→Synthesize (council governance, N≈20, R=1 deliberacji)
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide circle
+
+enum FocusGroupStatus {
+  pending
+  generating_personas
+  collecting_opinions
+  deliberating
+  synthesizing
+  completed
+  failed
+}
+
+enum GenerationMode {
+  proportions
+  slots
+}
+
+enum OpinionStatus {
+  pending
+  collected
+  failed
+}
+
+class User {
+  +email : string
+  +encrypted_password : string
+  --
+  <<Devise>>
+}
+
+class Product {
+  +name : string
+  +description : text
+  +created_at : datetime
+}
+
+class FocusGroup {
+  +name : string
+  +sample_size : integer
+  +generation_mode : GenerationMode
+  +target_demographics : jsonb
+  +status : FocusGroupStatus
+  +started_at : datetime
+  +deliberation_started_at : datetime
+  +synthesis_started_at : datetime
+  +completed_at : datetime
+  +error_message : text
+  --
+  +progress() : float
+  +all_agents_done?() : boolean
+  +all_deliberations_done?() : boolean
+  +expand_slots() : Array<slot_demographics>
+}
+
+class Persona {
+  +name : string
+  +description : text
+  +demographics : jsonb
+  +traits : jsonb
+}
+
+class Opinion {
+  +round : integer
+  +revised : boolean
+  +revision_rationale : text
+  +rating : integer
+  +pros : text
+  +cons : text
+  +quote : text
+  +raw_response : jsonb
+  +status : OpinionStatus
+  +error_message : text
+}
+
+class Chairman {
+  +llm_model : string
+  +role : string
+  +created_at : datetime
+}
+
+class Recommendation {
+  +strengths : jsonb
+  +weaknesses : jsonb
+  +rating_distribution : jsonb
+  +segment_insights : jsonb
+  +agreement_points : jsonb
+  +persuasive_arguments : jsonb
+  +persistent_divisions : jsonb
+  +generated_at : datetime
+}
+
+class PersonaGeneratorService <<service>> {
+  +call(slot_demographics) : Persona
+}
+
+class OpinionCollectorService <<service>> {
+  +call(persona, product) : Opinion
+}
+
+class DeliberationService <<service>> {
+  +call(persona, own_opinion, peer_opinions) : Opinion
+}
+
+class ChairmanSynthesisService <<service>> {
+  +call(focus_group, chairman) : Recommendation
+}
+
+class LlmClient <<service>> {
+  +complete(prompt, schema) : jsonb
+}
+
+class RunAgentJob <<asynchronous job>> {
+  +perform(focus_group_id, slot_demographics) : void
+}
+
+class CollectOpinionJob <<asynchronous job>> {
+  +perform(opinion_id) : void
+}
+
+class DeliberateJob <<asynchronous job>> {
+  +perform(focus_group_id, persona_id) : void
+}
+
+class ChairmanSynthesisJob <<asynchronous job>> {
+  +perform(focus_group_id) : void
+}
+
+User "1" -- "0..*" Product : creates >
+User "1" -- "0..*" FocusGroup : owns >
+Product "1" -- "0..*" FocusGroup : evaluated by >
+
+FocusGroup "1" *-- "0..*" Persona
+FocusGroup "1" *-- "0..*" Opinion
+FocusGroup "1" *-- "1" Chairman
+FocusGroup "1" *-- "0..1" Recommendation
+Persona "1" -- "1..2" Opinion : authors >
+
+RunAgentJob ..> PersonaGeneratorService
+RunAgentJob ..> OpinionCollectorService
+DeliberateJob ..> DeliberationService
+ChairmanSynthesisJob ..> ChairmanSynthesisService
+
+PersonaGeneratorService ..> LlmClient
+OpinionCollectorService ..> LlmClient
+DeliberationService ..> LlmClient
+ChairmanSynthesisService ..> LlmClient
+
+CollectOpinionJob ..> OpinionCollectorService
+
+note right of FocusGroup
+  Persony tworzone są od nowa dla każdej sesji.
+  Format target_demographics zależy od
+  generation_mode:
+
+  (proportions) - default, prosty UI:
+  {
+    "gender": {"kobieta": 0.6, "mezczyzna": 0.4},
+    "age":    {"25-34": 0.3, "35-44": 0.4, "45+": 0.3},
+    "income": {"sredni": 0.6, "wysoki": 0.4}
+  }
+  Wymiary niezalezne - bez kontroli korelacji.
+
+  (slots) - tryb advanced, jawne sloty:
+  [
+    {"count": 5, "gender": "kobieta", "age": "25-34", "income": "sredni"},
+    {"count": 7, "gender": "kobieta", "age": "35-44", "income": "wysoki"},
+    ...
+  ]
+  Pelna kontrola korelacji krzyzowych.
+
+  Metoda expand_slots() materializuje N
+  slot_demographics dla N x RunAgentJob -
+  w trybie proportions losuje z rozkladow,
+  w trybie slots rozwija liste z polem count.
+
+  Dla wariantu z deliberacja zalecane
+  sample_size = 12 (lost-in-the-middle,
+  wyplaszczanie krzywej informacyjnej -
+  patrz notatki-do-pracy.md).
+end note
+
+note right of Opinion
+  Każda Persona ma dwie opinie:
+  (round=0) prywatna, wydana niezależnie
+  (round=1) po przeczytaniu cudzych opinii;
+  może być identyczna z round=0 (revised=false)
+  lub zrewidowana (revised=true).
+  Chairman w syntezie dostaje OBA zestawy,
+  by móc opisać zmianę zdania i argumenty,
+  które przekonały innych (group dynamics).
+end note
+
+note bottom of Chairman
+  Pojedynczy LLM pełniący rolę moderatora-analityka
+  (chairman_model wg Halla). Po zakończeniu wszystkich
+  DeliberateJob otrzymuje pełen materiał (Opinion
+  round=0 + round=1 + persony) i pisze rekomendację:
+  mocne/słabe strony, rozkład ocen, segmenty,
+  punkty zgody i trwałe podziały.
+
+  Atrybut llm_model (np. "claude-opus-4-7",
+  "meta-llama/llama-3.1-8b-instruct") - nazwa
+  modelu w OpenRouter. W diagramie domenowym
+  byłoby "model", ale w Rails koliduje z konwencjami
+  ActiveModel - dlatego llm_model.
+end note
+
+note bottom of DeliberateJob
+  Fan-out N (po jednym joby na każdą Personę),
+  uruchamiany po barrier sync wszystkich
+  CollectOpinionJob. Każdy job:
+  (1) ładuje własną Opinion(round=0)
+  (2) ładuje pozostałe N-1 Opinion(round=0)
+  (3) prompt do LLM z wykluczeniem własnej opinii
+      z sekcji "co powiedzieli inni" (anti-anchoring)
+  (4) zapisuje Opinion(round=1) z revised + rationale
+end note
+
+note bottom of ChairmanSynthesisJob
+  Uruchamiany po barrier sync wszystkich DeliberateJob.
+  Wywołuje ChairmanSynthesisService, który syntezuje
+  rekomendację zgodnie ze schematem Halla:
+  - points of agreement after deliberation
+  - strong arguments that convinced others to change
+  - areas where the council remains divided
+end note
+
+@enduml
