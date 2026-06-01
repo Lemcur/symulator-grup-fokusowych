@@ -1,0 +1,119 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-sonnet-4-6","messages":[{"role":"user","content":[{"type":"text","text":"Jesteś
+        moderatorem (chairmanem) polskiej grupy fokusowej. Twoim zadaniem jest syntetyczne
+        podsumowanie wyników dyskusji w formie raportu badawczego.\n\nPRODUKT:\nAplikacja
+        do nauki języków\nMobilna aplikacja do nauki języków obcych.\n\nBRIEF SESJI:\nSample
+        size: 3 osób\nTarget demographics: {\"age\":{\"25-34\":0.5,\"35-44\":0.5},\"gender\":{\"kobieta\":0.5,\"mezczyzna\":0.5}}\n\nUCZESTNICY
+        (3 osób):\n1. Anna Kowalska — 25-29, Warszawa, Marketing Specialist\n2. Marek
+        Szymański — 40-49, Łódź, Kierownik logistyki\n3. Karolina Nowak — 30-34, Kraków,
+        Junior Accountant\n\nFINALNE OPINIE PO DELIBERACJI (round=1):\n1. Anna Kowalska
+        (Warszawa, Marketing Specialist) — ocena 3/5\n   Plusy: po deliberacji\n   Minusy:
+        nadal obawy\n   Cytat: \"tak\"\n\n2. Marek Szymański (Łódź, Kierownik logistyki)
+        — ocena 4/5\n   Plusy: po deliberacji\n   Minusy: nadal obawy\n   Cytat: \"tak\"\n\n3.
+        Karolina Nowak (Kraków, Junior Accountant) — ocena 5/5\n   Plusy: po deliberacji\n   Minusy:
+        nadal obawy\n   Cytat: \"tak\"\n\n\nREWIZJE (kto i dlaczego zmienił zdanie
+        po deliberacji):\n- Anna Kowalska: round0=3/5 → round1=3/5; powód: argument
+        X mnie przekonał\n- Karolina Nowak: round0=5/5 → round1=5/5; powód: argument
+        X mnie przekonał\n\nTWOJE ZADANIE:\nStwórz syntetyczny raport badawczy. Pamiętaj:\n-
+        Cytuj konkretne osoby przy insights (\"Anna (Warszawa, marketing): ...\")\n-
+        W persuasive_arguments wskaż konkretne argumenty które realnie przekonały
+        innych do zmiany — to dane do replikacji w innych badaniach\n- W persistent_divisions
+        pokaż gdzie panel pozostał podzielony pomimo dyskusji — to obszary wymagające
+        dalszego badania\n- W segment_insights wyciągnij wzorce między demografiami
+        (np. \"młodzi marketingowcy doceniają gamifikację, nauczyciele jej nie ufają\")\n-
+        Summary: 3-4 zdania głównego wniosku jak dla decydenta produktowego\n\nZwróć
+        JSON zgodny ze schematem.\n"}]}],"stream":false,"max_tokens":64000,"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"summary":{"type":"string","description":"Główny
+        wniosek z grupy fokusowej, 3-4 zdania syntetycznego streszczenia"},"strengths":{"type":"array","description":"Mocne
+        strony produktu wyciągnięte z opinii uczestników (3-5 punktów)","items":{"type":"string"}},"weaknesses":{"type":"array","description":"Słabe
+        strony produktu wyciągnięte z opinii uczestników (3-5 punktów)","items":{"type":"string"}},"agreement_points":{"type":"array","description":"Punkty
+        na których uczestnicy się zgadzają po deliberacji (3-5 punktów)","items":{"type":"string"}},"persuasive_arguments":{"type":"array","description":"Argumenty
+        które przekonały innych do zmiany zdania w deliberacji - co działa argumentacyjnie
+        (2-4 punkty)","items":{"type":"string"}},"persistent_divisions":{"type":"array","description":"Obszary
+        trwałego podziału - gdzie debata nie doprowadziła do zgody (2-4 punkty)","items":{"type":"string"}},"segment_insights":{"type":"array","description":"Insights
+        specyficzne dla segmentów demograficznych, np. ''młodzi marketingowcy doceniają
+        X, starsi obawiają się Y'' (2-4 punkty)","items":{"type":"string"}}},"required":["summary","strengths","weaknesses","agreement_points","persuasive_arguments","persistent_divisions","segment_insights"],"additionalProperties":false}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.2
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      Anthropic-Version:
+      - '2023-06-01'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 01 Jun 2026 21:49:46 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '30000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '29000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-06-01T21:49:13Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-06-01T21:49:49Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '50'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '49'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-06-01T21:49:11Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '38000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '37000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-06-01T21:49:13Z'
+      Request-Id:
+      - req_011CbdH2gLPZ95YqXJRjuAf1
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - eb6ff7a3-2a1a-4642-96da-bff6e798dd86
+      Traceresponse:
+      - 00-f4176b9d21743f0e387b594d434dc67d-89c45942c25f4e53-01
+      Server:
+      - cloudflare
+      Vary:
+      - Accept-Encoding
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - _cfuvid=8lXX29gbNdYS7cTeQ8MmnYpliAsU.JAdESGIKS1QGp0-1780350549.9740987-1.0.1.1-JKpj9JTPZEeQ9I6XrF9dgS3_gCQ6xupZwVtLYQjzbqw;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.anthropic.com
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a0516d395a096ca2-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1zb25uZXQtNC02IiwiaWQiOiJtc2dfMDE5WXJwOFRnQ0N6OTROdXJ3NWRZTlNiIiwidHlwZSI6Im1lc3NhZ2UiLCJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6W3sidHlwZSI6InRleHQiLCJ0ZXh0Ijoie1wic3VtbWFyeVwiOlwiR3J1cGEgZm9rdXNvd2EgesWCb8W8b25hIHogMyB1Y3plc3RuaWvDs3cgeiBzZWdtZW50w7N3IHdpZWtvd3ljaCAyNS0zNCBpIDM1LTQ0IG9jZW5pxYJhIG1vYmlsbsSFIGFwbGlrYWNqxJkgZG8gbmF1a2kgasSZenlrw7N3IG9iY3ljaCB1bWlhcmtvd2FuaWUgcG96eXR5d25pZSwgemUgxZtyZWRuacSFIG9jZW7EhSA0LzUuIE5hand5xbxzenkgZW50dXpqYXptIHd5a2F6YcWCYSBLYXJvbGluYSBOb3dhayAoSnVuaW9yIEFjY291bnRhbnQsIEtyYWvDs3cpLCBrdMOzcmEgcHJ6eXpuYcWCYSBvY2VuxJkgbWFrc3ltYWxuxIUsIHBvZGN6YXMgZ2R5IEFubmEgS293YWxza2EgKE1hcmtldGluZyBTcGVjaWFsaXN0LCBXYXJzemF3YSkgcG96b3N0YcWCYSBiYXJkemllaiBzY2VwdHljem5hIHogb2NlbsSFIDMvNS4gUG9taW1vIGRlbGliZXJhY2ppIHVjemVzdG5pY3kgbmllIHptaWVuaWxpIHN3b2ljaCBvY2VuLCBjbyBzdWdlcnVqZSB1dHJ3YWxvbmUgb3BpbmllIG9wYXJ0ZSBuYSByZWFsbnljaCBkb8Wbd2lhZGN6ZW5pYWNoIGx1YiBvY3pla2l3YW5pYWNoLiBQcm9kdWt0IHd5ZGFqZSBzacSZIHRyYWZpYcSHIGRvIHNlZ21lbnR1IHByYWNvd25pa8OzdyBiaXVyb3d5Y2ggdyDFm3JlZG5pbSBwcnplZHppYWxlIHdpZWtvd3ltLCBqZWRuYWsgd3ltYWdhIGRvcHJhY293YW5pYSB3IG9ic3phcmFjaCBidWR6xIVjeWNoIG9iYXd5IHVjemVzdG5pa8Ozdy5cIixcInN0cmVuZ3Roc1wiOltcIkFwbGlrYWNqYSB3emJ1ZHppxYJhIG9nw7NsbmllIHBvenl0eXduZSBvZGN6dWNpYSB3xZtyw7NkIHdzenlzdGtpY2ggdHJ6ZWNoIHVjemVzdG5pa8OzdywgY28gd2lkYcSHIHcgb2NlbmFjaCBwb3d5xbxlaiBsdWIgcsOzd255Y2ggMy81XCIsXCJLYXJvbGluYSBOb3dhayAoS3Jha8OzdywgSnVuaW9yIEFjY291bnRhbnQpIHByenl6bmHFgmEgb2NlbsSZIDUvNSwgd3NrYXp1asSFYyBuYSBkdcW8eSBwb3RlbmNqYcWCIHByb2R1a3R1IHcgc2VnbWVuY2llIG3Fgm9kc3p5Y2ggcHJhY293bmlrw7N3IGJpdXJvd3ljaFwiLFwiTWFyZWsgU3p5bWHFhHNraSAoxYHDs2TFuiwgS2llcm93bmlrIGxvZ2lzdHlraSkgb2NlbmnFgiBhcGxpa2FjasSZIG5hIDQvNSwgc3VnZXJ1asSFYywgxbxlIHByb2R1a3Qgb2Rwb3dpYWRhIHBvdHJ6ZWJvbSBwcmFjb3duaWvDs3cgbmEgc3Rhbm93aXNrYWNoIGtpZXJvd25pY3p5Y2hcIixcIlByb2R1a3QgemRvxYJhxYIgdXRyenltYcSHIHBvenl0eXduZSBvY2VueSBuYXdldCBwbyBmYXppZSBkZWxpYmVyYWNqaSwgY28gxZt3aWFkY3p5IG8gYXV0ZW50eWN6bnltIHBvc3RyemVnYW5pdSB3YXJ0b8WbY2kgcHJ6ZXogdWN6ZXN0bmlrw7N3XCIsXCJSw7PFvG5vcm9kbm/Fm8SHIHByb2ZpbGkgdWN6ZXN0bmlrw7N3IHdza2F6dWplIG5hIHBvdGVuY2phbG5pZSBzemVyb2vEhSBncnVwxJkgZG9jZWxvd8SFIGFwbGlrYWNqaVwiXSxcIndlYWtuZXNzZXNcIjpbXCJXc3p5c2N5IHVjemVzdG5pY3kgemFkZWtsYXJvd2FsaSAnbmFkYWwgb2Jhd3knIHBvIGRlbGliZXJhY2ppLCBjbyBvem5hY3phIG5pZXJvendpxIV6YW5lIHByb2JsZW15IHogcHJvZHVrdGVtIG5pZXphbGXFvG5pZSBvZCBqZWdvIHphbGV0XCIsXCJBbm5hIEtvd2Fsc2thIChXYXJzemF3YSwgTWFya2V0aW5nIFNwZWNpYWxpc3QpIHBvem9zdGHFgmEgcHJ6eSBvY2VuaWUgMy81IG1pbW8gZGVsaWJlcmFjamksIGNvIHdza2F6dWplIG5hIGlzdG90bmUgYmFyaWVyeSB3IGFkb3BjamkgdyBzZWdtZW5jaWUgc3BlY2phbGlzdMOzdyBtYXJrZXRpbmd1XCIsXCJCcmFrIHptaWFueSBvY2VuIHBvIHJ1bmR6aWUgZGVsaWJlcmFjamkgc3VnZXJ1amUsIMW8ZSBhcmd1bWVudHkgcHJlemVudG93YW5lIHBvZGN6YXMgZHlza3VzamkgbmllIGJ5xYJ5IHd5c3RhcmN6YWrEhWNvIHByemVrb251asSFY2UgZG8gcHJ6ZcWCYW1hbmlhIG9iYXdcIixcIk9nw7NsbmEgbGFrb25pY3pub8WbxIcgb2Rwb3dpZWR6aSB1Y3plc3RuaWvDs3cgbW/FvGUgd3NrYXp5d2HEhyBuYSB0cnVkbm/Fm2NpIHcgYXJ0eWt1xYJvd2FuaXUga29ua3JldG55Y2ggd2FydG/Fm2NpIHByb2R1a3R1XCIsXCJVdHJ6eW11asSFY2Ugc2nEmSBvYmF3eSB3IGNhxYJlaiBncnVwaWUgc3VnZXJ1asSFIHBvdGVuY2phbG5lIHByb2JsZW15IHogVVgsIG9mZXJ0xIUgY2Vub3fEhSBsdWIgemFrcmVzZW0gZnVua2Nqb25hbG5vxZtjaVwiXSxcImFncmVlbWVudF9wb2ludHNcIjpbXCJXc3p5c2N5IHRyemVqIHVjemVzdG5pY3kgemdvZHppbGkgc2nEmSwgxbxlIHByb2R1a3QgcG9zaWFkYSBwZXduxIUgd2FydG/Fm8SHIHXFvHl0a293xIUsIHd5cmHFvGFqxIVjIG9jZW55IGNvIG5ham1uaWVqIDMvNVwiLFwiUGFuZWwgamVkbm9nxYJvxZtuaWUgcG90d2llcmR6acWCIHphaW50ZXJlc293YW5pZSBrYXRlZ29yacSFIHByb2R1a3Rvd8SFIOKAlCBhcGxpa2FjamFtaSBkbyBuYXVraSBqxJl6eWvDs3cgb2JjeWNoXCIsXCJVY3plc3RuaWN5IHpnb2RuaSBieWxpIGNvIGRvIHRlZ28sIMW8ZSBkZWxpYmVyYWNqYSBkb3N0YXJjennFgmEgYXJndW1lbnTDs3cgd2FydHljaCB1d3pnbMSZZG5pZW5pYSAoJ2FyZ3VtZW50IFggbW5pZSBwcnpla29uYcWCJylcIixcIsW7YWRlbiB6IHVjemVzdG5pa8OzdyBuaWUgemR5c2tyZWR5dG93YcWCIHByb2R1a3R1IGNhxYJrb3dpY2llIOKAlCBuYXdldCBuYWpiYXJkemllaiBzY2VwdHljem5hIEFubmEgS293YWxza2EgZGHFgmEgb2NlbsSZIMWbcm9ka293xIVcIixcIldzenlzY3kgdWN6ZXN0bmljeSBwcnp5em5hbGksIMW8ZSBtaW1vIHBvenl0eXdueWNoIGFzcGVrdMOzdywgbmFkYWwgaXN0bmllasSFIG5pZXJvendpxIV6YW5lIG9iYXd5IGRvdHljesSFY2UgYXBsaWthY2ppXCJdLFwicGVyc3Vhc2l2ZV9hcmd1bWVudHNcIjpbXCJBcmd1bWVudCBYIOKAlCB3c2themFueSBwcnpleiBBbm7EmSBLb3dhbHNrxIUgaSBLYXJvbGluxJkgTm93YWsgamFrbyBwcnpla29udWrEhWN5IOKAlCBjaG/EhyBuaWUgem1pZW5pxYIgaWNoIG9jZW4ga2/FhGNvd3ljaCwgem9zdGHFgiBwb3p5dHl3bmllIG9jZW5pb255IGludGVsZWt0dWFsbmllLCBjbyBzdWdlcnVqZSwgxbxlIGRvdHljennFgiByZWFsbmVqIHdhcnRvxZtjaSBwcm9kdWt0dSBpIHBvd2luaWVuIHpvc3RhxIcgemlkZW50eWZpa293YW55IG9yYXogd3ptb2NuaW9ueSB3IGtvbXVuaWthY2ppIG1hcmtldGluZ293ZWpcIixcIkFyZ3VtZW50YWNqYSBNYXJrYSBTenltYcWEc2tpZWdvIChLaWVyb3duaWsgbG9naXN0eWtpKSBtb2fFgmEgd3DFgnluxIXEhyBuYSBwb3p5dHl3bmUgcG9zdHJ6ZWdhbmllIHByemV6IHBvem9zdGHFgnljaCB1Y3plc3RuaWvDs3csIGJpb3LEhWMgcG9kIHV3YWfEmSBqZWdvIHd5c29rxIUgb2NlbsSZIDQvNSBpIHByYXdkb3BvZG9ibmllIHByYWdtYXR5Y3puZSBwb2RlasWbY2llIGRvIGtvcnp5xZtjaSB6IG5hdWtpIGrEmXp5a8OzdyB3IGtvbnRla8WbY2llIHphd29kb3d5bVwiLFwiUGVyc3Bla3R5d2EgemF3b2Rvd2VqIHXFvHl0ZWN6bm/Fm2NpIGFwbGlrYWNqaSAobmF1a2EgasSZenlrYSB3IGtvbnRla8WbY2llIGthcmllcnkpIG1vZ8WCYSBzdGFub3dpxIcgd3Nww7NsbnkgbWlhbm93bmlrLCBrdMOzcnkgxYLEhWN6ecWCIHVjemVzdG5pa8OzdyB6IHLDs8W8bnljaCBicmFuxbxcIl0sXCJwZXJzaXN0ZW50X2RpdmlzaW9uc1wiOltcIkFubmEgS293YWxza2EgKDI1LTI5LCBNYXJrZXRpbmcgU3BlY2lhbGlzdCwgV2Fyc3phd2EpIGtvbnRyYSBLYXJvbGluYSBOb3dhayAoMzAtMzQsIEp1bmlvciBBY2NvdW50YW50LCBLcmFrw7N3KSDigJQgcsOzxbxuaWNhIG9jZW4gMy81IHZzIDUvNSB1dHJ6eW1hxYJhIHNpxJkgcG8gZGVsaWJlcmFjamksIHdza2F6dWrEhWMgbmEgZnVuZGFtZW50YWxuZSByw7PFvG5pY2UgdyBwb3N0cnplZ2FuaXUgd2FydG/Fm2NpIHByb2R1a3R1IG1pxJlkenkgdHltaSBwcm9maWxhbWlcIixcIlNlZ21lbnQgYmFyZHppZWogZG/Fm3dpYWRjem9ueWNoIHphd29kb3dvIHVjemVzdG5pa8OzdyAoTWFyZWsgU3p5bWHFhHNraSwgNDAtNDkpIHZzIG3Fgm9kc2kgdWN6ZXN0bmljeSAoQW5uYSBLb3dhbHNrYSwgMjUtMjkpIOKAlCByw7PFvG5pY2EgamVkbmVnbyBwdW5rdHUgdyBvY2VuYWNoIHN1Z2VydWplIG9kbWllbm5lIHByaW9yeXRldHkgcHJ6eSBvY2VuaWUgYXBsaWthY2ppIG1vYmlsbmVqXCIsXCJPYmF3eSB6Z8WCYXN6YW5lIHByemV6IHdzenlzdGtpY2ggdWN6ZXN0bmlrw7N3IG5pZSB6b3N0YcWCeSByb3p3acSFemFuZSBwb2RjemFzIGRlbGliZXJhY2ppIOKAlCBjbyBvem5hY3phLCDFvGUgcGFuZWwgcG96b3N0YcWCIHBvZHppZWxvbnkgdyBrd2VzdGlpIGdvdG93b8WbY2kgZG8gcGXFgm5laiBhZG9wY2ppIHByb2R1a3R1IG1pbW8gb2fDs2xuaWUgcG96eXR5d255Y2ggb2NlblwiXSxcInNlZ21lbnRfaW5zaWdodHNcIjpbXCJNxYJvZHN6ZSBrb2JpZXR5IHogc2VrdG9yYSBrb3Jwb3JhY3lqbmVnbyAoQW5uYSBLb3dhbHNrYSwgMjUtMjksIG1hcmtldGluZywgV2Fyc3phd2EpIHd5a2F6dWrEhSBiYXJkemllaiBrcnl0eWN6bmUgcG9kZWrFm2NpZSBkbyBhcGxpa2FjamkgbW9iaWxueWNoIOKAlCBvY2VuYSAzLzUgbW/FvGUgb2R6d2llcmNpZWRsYcSHIHd5c29raWUgb2N6ZWtpd2FuaWEgcG9rb2xlbmlhIGN5ZnJvd3ljaCBuYXRpdmUnw7N3IHdvYmVjIFVYIGkgZnVua2Nqb25hbG5vxZtjaVwiLFwiUHJhY293bmljeSB3IHdpZWt1IDMwLTM0IHogYnJhbsW8eSBmaW5hbnNvd2VqIChLYXJvbGluYSBOb3dhaywgSnVuaW9yIEFjY291bnRhbnQsIEtyYWvDs3cpIHd5a2F6dWrEhSBuYWp3ecW8c3p5IGVudHV6amF6bSB3b2JlYyBuYXJ6xJlkemkgZG8gc2Ftb3JvendvanUg4oCUIG9jZW5hIDUvNSBzdWdlcnVqZSwgxbxlIHNlZ21lbnQgdGVuIHBvc3RyemVnYSBuYXVrxJkgasSZenlrw7N3IGpha28gaW53ZXN0eWNqxJkgdyBrYXJpZXLEmVwiLFwiTWVuZWTFvGVyb3dpZSDFm3JlZG5pZWdvIHN6Y3plYmxhIHogbW5pZWpzenljaCBtaWFzdCAoTWFyZWsgU3p5bWHFhHNraSwgNDAtNDksIGxvZ2lzdHlrYSwgxYHDs2TFuikgcGxhc3VqxIUgc2nEmSBwb8Wbcm9ka3Ugc2thbGkgb2NlbiAoNC81KSwgY28gbW/FvGUgd3NrYXp5d2HEhyBuYSBwcmFnbWF0eWN6bmUsIHphZGFuaW93ZSBwb2RlasWbY2llIGRvIGFwbGlrYWNqaSBlZHVrYWN5am55Y2gg4oCUIGNlbmnEhSBmdW5rY2pvbmFsbm/Fm8SHLCBhbGUgemFjaG93dWrEhSBvc3Ryb8W8bm/Fm8SHIHdvYmVjIG5vd3ljaCB0ZWNobm9sb2dpaVwiLFwiS29iaWV0eSB3IGdydXBpZSAoQW5uYSBpIEthcm9saW5hKSB3eWthemHFgnkgd2nEmWtzesSFIHNrxYJvbm5vxZvEhyBkbyBha2NlcHRhY2ppIGFyZ3VtZW50w7N3IHBvZGN6YXMgZGVsaWJlcmFjamkgKCdhcmd1bWVudCBYIG1uaWUgcHJ6ZWtvbmHFgicpLCBwb2RjemFzIGdkeSBkeW5hbWlrYSB6bWlhbnkgemRhbmlhIE1hcmthIFN6eW1hxYRza2llZ28gcG96b3N0YWplIG5pZXVkb2t1bWVudG93YW5hIOKAlCB3YXJ0byB6YmFkYcSHIHLDs8W8bmljZSBnZW5kZXJvd2UgdyBwcm9jZXNpZSBkZWN5enlqbnltIHByenkgYWRvcGNqaSBlZHVrYWN5am55Y2ggYXBsaWthY2ppIG1vYmlsbnljaFwiXX0ifV0sInN0b3BfcmVhc29uIjoiZW5kX3R1cm4iLCJzdG9wX3NlcXVlbmNlIjpudWxsLCJzdG9wX2RldGFpbHMiOm51bGwsInVzYWdlIjp7ImlucHV0X3Rva2VucyI6MTQ5NCwiY2FjaGVfY3JlYXRpb25faW5wdXRfdG9rZW5zIjowLCJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfY3JlYXRpb24iOnsiZXBoZW1lcmFsXzVtX2lucHV0X3Rva2VucyI6MCwiZXBoZW1lcmFsXzFoX2lucHV0X3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjE3ODgsInNlcnZpY2VfdGllciI6InN0YW5kYXJkIiwiaW5mZXJlbmNlX2dlbyI6Imdsb2JhbCJ9fQ==
+  recorded_at: Mon, 01 Jun 2026 21:49:45 GMT
+recorded_with: VCR 6.4.0

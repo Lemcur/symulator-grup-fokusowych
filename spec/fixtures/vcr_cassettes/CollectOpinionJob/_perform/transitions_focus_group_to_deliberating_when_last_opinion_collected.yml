@@ -1,0 +1,193 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Wcielasz
+        się w realnego respondenta polskiej grupy fokusowej. Odpowiadasz JAKO ta osoba.\n\nIMIĘ:
+        Persona 6\nOPIS: Krótki opis tej persony\nDEMOGRAFIA: {\"age\":\"25-34\",\"gender\":\"kobieta\",\"income\":\"sredni\"}\nWARTOŚCI:
+        \nLIFESTYLE: \nOBAWY ZAKUPOWE: \nSTYL KOMUNIKACJI: \n\nPRODUKT DO OCENY:\nAplikacja
+        do nauki języków\nMobilna aplikacja do nauki języków obcych.\n\nTwoje zadanie:
+        WYPOWIEDZ SIĘ na temat tego produktu zgodnie z osobowością z brief''u powyżej.\n\n-
+        Oceń produkt w skali 1-5 (1=zdecydowanie nie kupię/nie użyję, 5=zdecydowanie
+        tak)\n- Wymień konkretne PLUSY ważne dla CIEBIE — nie ogólne (\"dobra aplikacja\"),
+        tylko specyficzne (\"po godzinach mam tylko 15 minut zanim zasnę\")\n- Wymień
+        konkretne MINUSY / obawy / zastrzeżenia jakie masz wobec tego produktu\n-
+        Daj jeden charakterystyczny CYTAT w pierwszej osobie — coś co naprawdę powiedziałabyś/powiedziałbyś
+        o tym produkcie\n\nMów stylu komunikacji typowym dla swojej osoby. Możesz
+        być sceptyczny/sceptyczna. Nie idealizuj.\n\nZwróć JSON zgodny ze schematem.\n"}],"stream":false,"response_format":{"type":"json_schema","json_schema":{"name":"OpinionSchema","schema":{"type":"object","properties":{"rating":{"type":"number","description":"Ocena
+        produktu w skali 1-5 (1=zdecydowanie nie kupię/nie użyję, 5=zdecydowanie kupię/użyję)"},"pros":{"type":"string","description":"Konkretne
+        plusy produktu z perspektywy TEJ osoby (nie ogólne marketingowe slogany)"},"cons":{"type":"string","description":"Konkretne
+        minusy, obawy, zastrzeżenia tej osoby"},"quote":{"type":"string","description":"Charakterystyczny
+        cytat w pierwszej osobie — coś co ta osoba naprawdę by powiedziała o produkcie"}},"required":["rating","pros","cons","quote"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.2
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 01 Jun 2026 20:20:14 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a050ead83aaf3560-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - licencjat-bdxh7k
+      Openai-Processing-Ms:
+      - '4457'
+      Openai-Project:
+      - proj_x36BVFwHkUg7uri49E9W10qe
+      Openai-Version:
+      - '2020-10-01'
+      X-Openai-Proxy-Wasm:
+      - v0.1
+      X-Ratelimit-Limit-Requests:
+      - '10000'
+      X-Ratelimit-Limit-Tokens:
+      - '200000'
+      X-Ratelimit-Remaining-Requests:
+      - '9998'
+      X-Ratelimit-Remaining-Tokens:
+      - '199739'
+      X-Ratelimit-Reset-Requests:
+      - 13.942s
+      X-Ratelimit-Reset-Tokens:
+      - 78ms
+      X-Request-Id:
+      - req_30917a9a9ea64750b27f6ae8521ec619
+      Set-Cookie:
+      - __cf_bm=Zsx.f7HxweTrAmK9FkiVf0.09GrPoldEeIO_wZbur5k-1780345209.635971-1.0.1.1-IzGanaCFRc5AMExCDh5lTUkDRsH_CSNmaPOFWd40thPVwoJv.6iNdWuuGTDvsHhAwxFPRl8_CeUdZ4fisGDmShqsMJgmsE96O3wB8jxD9dPIE4MCoyUdmG2vG6NiByTA;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Mon,
+        01 Jun 2026 20:50:14 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC1EbTNQR2ZzS1U3aE1RVldxSWt1Ulk4NGZUbExHWSIsCiAgIm9iamVjdCI6ICJjaGF0LmNvbXBsZXRpb24iLAogICJjcmVhdGVkIjogMTc4MDM0NTIxMCwKICAibW9kZWwiOiAiZ3B0LTRvLW1pbmktMjAyNC0wNy0xOCIsCiAgImNob2ljZXMiOiBbCiAgICB7CiAgICAgICJpbmRleCI6IDAsCiAgICAgICJtZXNzYWdlIjogewogICAgICAgICJyb2xlIjogImFzc2lzdGFudCIsCiAgICAgICAgImNvbnRlbnQiOiAie1wicmF0aW5nXCI6NCxcInByb3NcIjpcIkFwbGlrYWNqYSBtYSBjaWVrYXd5IHN5c3RlbSBnaWVyIGkgd3l6d2HFhCwgY28gc3ByYXdpYSwgxbxlIG5hdWthIGplc3QgYmFyZHppZWogYW5nYcW8dWrEhWNhLiBEemnEmWtpIG1vxbxsaXdvxZtjaSBuYXVraSB3IGtyw7N0a2ljaCBzZXNqYWNoLCBtb2fEmSBqZWogdcW8eXdhxIcgdyBwcnplcndhY2ggdyBwcmFjeSBjenkgcHJ6ZWQgc25lbSwgY28gamVzdCBkbGEgbW5pZSBiYXJkem8gd3lnb2RuZS5cIixcImNvbnNcIjpcIk9iYXdpYW0gc2nEmSwgxbxlIGplxZtsaSBuaWUgbWFtIMW8YWRuZWdvIG5hdWN6eWNpZWxhLCBtb2fEmSDFumxlIHByenlzd29pxIcgZ3JhbWF0eWvEmSBsdWIgd3ltb3fEmS4gUsOzd25pZcW8IG5pZWt0w7NyZSBtYXRlcmlhxYJ5IHPEhSBwxYJhdG5lLCBjbyBtb8W8ZSBiecSHIHByb2JsZW1hdHljem5lLCBqZcWbbGkgY2hjxJkga29yenlzdGHEhyB6IG5pY2ggcmVndWxhcm5pZS5cIixcInF1b3RlXCI6XCJGYWpuaWUsIMW8ZSBtb8W8bmEgc2nEmSB1Y3p5xIcgdyBkcm9kemUsIGFsZSBiZXogbmF1Y3p5Y2llbGEgY3p1asSZIHNpxJkgdHJvY2jEmSB6YWd1YmlvbmEgdyB0ZWogY2HFgmVqIGdyYW1hdHljZS5cIn0iLAogICAgICAgICJyZWZ1c2FsIjogbnVsbCwKICAgICAgICAiYW5ub3RhdGlvbnMiOiBbXQogICAgICB9LAogICAgICAibG9ncHJvYnMiOiBudWxsLAogICAgICAiZmluaXNoX3JlYXNvbiI6ICJzdG9wIgogICAgfQogIF0sCiAgInVzYWdlIjogewogICAgInByb21wdF90b2tlbnMiOiA1MzksCiAgICAiY29tcGxldGlvbl90b2tlbnMiOiAxNzAsCiAgICAidG90YWxfdG9rZW5zIjogNzA5LAogICAgInByb21wdF90b2tlbnNfZGV0YWlscyI6IHsKICAgICAgImNhY2hlZF90b2tlbnMiOiAwLAogICAgICAiYXVkaW9fdG9rZW5zIjogMAogICAgfSwKICAgICJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjogewogICAgICAicmVhc29uaW5nX3Rva2VucyI6IDAsCiAgICAgICJhdWRpb190b2tlbnMiOiAwLAogICAgICAiYWNjZXB0ZWRfcHJlZGljdGlvbl90b2tlbnMiOiAwLAogICAgICAicmVqZWN0ZWRfcHJlZGljdGlvbl90b2tlbnMiOiAwCiAgICB9CiAgfSwKICAic2VydmljZV90aWVyIjogImRlZmF1bHQiLAogICJzeXN0ZW1fZmluZ2VycHJpbnQiOiAiZnBfZGM1NDYwNjU3ZiIKfQo=
+  recorded_at: Mon, 01 Jun 2026 20:20:14 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Wcielasz
+        się w realnego respondenta polskiej grupy fokusowej. Odpowiadasz JAKO ta osoba.\n\nIMIĘ:
+        Persona 7\nOPIS: Krótki opis tej persony\nDEMOGRAFIA: {\"age\":\"25-34\",\"gender\":\"kobieta\",\"income\":\"sredni\"}\nWARTOŚCI:
+        \nLIFESTYLE: \nOBAWY ZAKUPOWE: \nSTYL KOMUNIKACJI: \n\nPRODUKT DO OCENY:\nAplikacja
+        do nauki języków\nMobilna aplikacja do nauki języków obcych.\n\nTwoje zadanie:
+        WYPOWIEDZ SIĘ na temat tego produktu zgodnie z osobowością z brief''u powyżej.\n\n-
+        Oceń produkt w skali 1-5 (1=zdecydowanie nie kupię/nie użyję, 5=zdecydowanie
+        tak)\n- Wymień konkretne PLUSY ważne dla CIEBIE — nie ogólne (\"dobra aplikacja\"),
+        tylko specyficzne (\"po godzinach mam tylko 15 minut zanim zasnę\")\n- Wymień
+        konkretne MINUSY / obawy / zastrzeżenia jakie masz wobec tego produktu\n-
+        Daj jeden charakterystyczny CYTAT w pierwszej osobie — coś co naprawdę powiedziałabyś/powiedziałbyś
+        o tym produkcie\n\nMów stylu komunikacji typowym dla swojej osoby. Możesz
+        być sceptyczny/sceptyczna. Nie idealizuj.\n\nZwróć JSON zgodny ze schematem.\n"}],"stream":false,"response_format":{"type":"json_schema","json_schema":{"name":"OpinionSchema","schema":{"type":"object","properties":{"rating":{"type":"number","description":"Ocena
+        produktu w skali 1-5 (1=zdecydowanie nie kupię/nie użyję, 5=zdecydowanie kupię/użyję)"},"pros":{"type":"string","description":"Konkretne
+        plusy produktu z perspektywy TEJ osoby (nie ogólne marketingowe slogany)"},"cons":{"type":"string","description":"Konkretne
+        minusy, obawy, zastrzeżenia tej osoby"},"quote":{"type":"string","description":"Charakterystyczny
+        cytat w pierwszej osobie — coś co ta osoba naprawdę by powiedziała o produkcie"}},"required":["rating","pros","cons","quote"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.2
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 01 Jun 2026 20:20:20 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a050eafa48b1f53c-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - licencjat-bdxh7k
+      Openai-Processing-Ms:
+      - '4817'
+      Openai-Project:
+      - proj_x36BVFwHkUg7uri49E9W10qe
+      Openai-Version:
+      - '2020-10-01'
+      X-Openai-Proxy-Wasm:
+      - v0.1
+      X-Ratelimit-Limit-Requests:
+      - '10000'
+      X-Ratelimit-Limit-Tokens:
+      - '200000'
+      X-Ratelimit-Remaining-Requests:
+      - '9997'
+      X-Ratelimit-Remaining-Tokens:
+      - '199739'
+      X-Ratelimit-Reset-Requests:
+      - 17.865s
+      X-Ratelimit-Reset-Tokens:
+      - 78ms
+      X-Request-Id:
+      - req_a616731887e54620a03176e9cb7b26b1
+      Set-Cookie:
+      - __cf_bm=ZoLpJfanj58g7FcwJKN6l6Ed8TaKwRYrXibUGLwIls8-1780345215.08477-1.0.1.1-EpVBEPJPXlgY5tY.OqJb.FnMVKBDXSWTCWJv33voXHycBxkYe4fpDc7hrq2C9RRTmzQDWFJBqBzuAzHKit2K70_BiENnyFgiGVPp_F.jum3.vP71TCGfPpEDPanHeTjm;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Mon,
+        01 Jun 2026 20:50:20 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC1EbTNQTDhOVG9mTThCV0NCakVBaE1Bb2FxTHkwNyIsCiAgIm9iamVjdCI6ICJjaGF0LmNvbXBsZXRpb24iLAogICJjcmVhdGVkIjogMTc4MDM0NTIxNSwKICAibW9kZWwiOiAiZ3B0LTRvLW1pbmktMjAyNC0wNy0xOCIsCiAgImNob2ljZXMiOiBbCiAgICB7CiAgICAgICJpbmRleCI6IDAsCiAgICAgICJtZXNzYWdlIjogewogICAgICAgICJyb2xlIjogImFzc2lzdGFudCIsCiAgICAgICAgImNvbnRlbnQiOiAie1wicmF0aW5nXCI6NCxcInByb3NcIjpcIkFwbGlrYWNqYSBtYSDFm3dpZXRueSBpbnRlcmZlanMgaSBqZXN0IGludHVpY3lqbmEgdyBvYnPFgnVkemUuIE1vZ8SZIMSHd2ljennEhyBzxYJvd25pY3R3byB3IGRvd29sbnltIG1pZWpzY3UgaSBjemFzaWUsIGNvIGlkZWFsbmllIHBhc3VqZSBkbyBtb2plZ28gemFwcmFjb3dhbmVnbyDFvHljaWEuIFV3YcW8YW0gdGXFvCwgxbxlIGNvZHppZW5uZSDEh3dpY3plbmlhLCBuYXdldCBrcsOzdGtpZSwgc8SFIGJhcmR6byBwb21vY25lIHcgbmF1Y2UuXCIsXCJjb25zXCI6XCJDemFzYW1pIG1hdGVyaWHFgnkgc8SFIHpieXQgZnJhZ21lbnRhcnljem5lLCBwcnpleiBjbyB0cnVkbmllaiBtaSB6cm96dW1pZcSHIGtvbnRla3N0IHXFvHljaWEgc8WCw7N3ZWsgY3p5IHp3cm90w7N3LiBNYW0gdGXFvCBvYmF3eSwgY3p5IG1vdHl3YWNqYSBkxYJ1Z28gbWkgbmllIG9wYWRuaWUg4oCUIHBvdHJ6ZWJ1asSZIGN6ZWdvxZssIGNvIG1uaWUgYsSZZHppZSB0cnp5bWHEhyB3IHJ5emFjaCwgamFrIGpha2nFmyBlbGVtZW50IGdyeXdhbGl6YWNqaS5cIixcInF1b3RlXCI6XCJDemFzZW0gY3p1asSZLCDFvGUgYXBsaWthY2plIGRvIG5hdWtpIGrEmXp5a8OzdyBtb2fEhSBiecSHIHN1cGVyLCBhbGUgbXVzesSZIGplc3pjemUgcGV3bmllIHBvZWtzcGVyeW1lbnRvd2HEhywgxbxlYnkgem5hbGXFusSHIHTEmSBpZGVhbG7EhSBkbGEgc2llYmllLlwifSIsCiAgICAgICAgInJlZnVzYWwiOiBudWxsLAogICAgICAgICJhbm5vdGF0aW9ucyI6IFtdCiAgICAgIH0sCiAgICAgICJsb2dwcm9icyI6IG51bGwsCiAgICAgICJmaW5pc2hfcmVhc29uIjogInN0b3AiCiAgICB9CiAgXSwKICAidXNhZ2UiOiB7CiAgICAicHJvbXB0X3Rva2VucyI6IDUzOSwKICAgICJjb21wbGV0aW9uX3Rva2VucyI6IDIwMywKICAgICJ0b3RhbF90b2tlbnMiOiA3NDIsCiAgICAicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjogewogICAgICAiY2FjaGVkX3Rva2VucyI6IDAsCiAgICAgICJhdWRpb190b2tlbnMiOiAwCiAgICB9LAogICAgImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOiB7CiAgICAgICJyZWFzb25pbmdfdG9rZW5zIjogMCwKICAgICAgImF1ZGlvX3Rva2VucyI6IDAsCiAgICAgICJhY2NlcHRlZF9wcmVkaWN0aW9uX3Rva2VucyI6IDAsCiAgICAgICJyZWplY3RlZF9wcmVkaWN0aW9uX3Rva2VucyI6IDAKICAgIH0KICB9LAogICJzZXJ2aWNlX3RpZXIiOiAiZGVmYXVsdCIsCiAgInN5c3RlbV9maW5nZXJwcmludCI6ICJmcF9kYzU0NjA2NTdmIgp9Cg==
+  recorded_at: Mon, 01 Jun 2026 20:20:19 GMT
+recorded_with: VCR 6.4.0

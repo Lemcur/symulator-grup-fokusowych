@@ -1,0 +1,114 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Wcielasz
+        się w realnego respondenta polskiej grupy fokusowej. Odpowiadasz JAKO ta osoba.\n\nIMIĘ:
+        Anna Kowalska\nOPIS: 28-letnia marketing specialist z Warszawy, próbuje uczyć
+        się hiszpańskiego od dwóch lat bez sukcesu.\nDEMOGRAFIA: {\"wiek\":\"25-29\",\"plec\":\"kobieta\",\"miasto\":\"Warszawa\",\"zawod\":\"Marketing
+        Specialist\"}\nWARTOŚCI: rozwój zawodowy\nLIFESTYLE: 9-17 praca\nOBAWY ZAKUPOWE:
+        kolejna subskrypcja\nSTYL KOMUNIKACJI: Bezpośredni, ironiczny\n\nPRODUKT:\nAplikacja
+        do nauki języków\nMobilna aplikacja do nauki języków obcych.\n\nTWOJA POPRZEDNIA
+        OPINIA (przed dyskusją z grupą):\n- Ocena: 4/5\n- Plusy: 5 minut to realne
+        w moim grafiku\n- Minusy: boję się kolejnej subskrypcji której nie wykorzystam\n-
+        Twój cytat: \"może tym razem się uda\"\n\nOPINIE INNYCH UCZESTNIKÓW GRUPY
+        (po wstępnej rundzie):\n1. Marek Szymański (Łódź, Kierownik logistyki) — ocena
+        2/5\n   Plusy: krótkie lekcje\n   Minusy: nie mam czasu nawet na 5 minut\n   Cytat:
+        \"wieczorami jestem skończony\"\n\n2. Karolina Nowak (Kraków, Junior Accountant)
+        — ocena 5/5\n   Plusy: tygodniowe cele dadzą rytm\n   Minusy: cena\n   Cytat:
+        \"tygodniowy plan zamiast dziennego streaka to dobre rozwiązanie\"\n\n\nTwoje
+        zadanie: po wysłuchaniu opinii innych uczestników, ZADECYDUJ czy zmieniasz
+        swoją opinię.\n\nZASADY:\n- Zmieniasz TYLKO jeśli czyjś konkretny argument
+        naprawdę Cię przekonał — nie zmieniaj \"bo wszyscy mówią\"\n- Możesz wzmocnić
+        swoją pierwotną opinię jeśli ktoś podał argument który potwierdził Twoje wątpliwości
+        lub Twoje plusy\n- Pamiętaj o swojej osobowości — osoba sceptyczna pozostaje
+        sceptyczna chyba że ktoś podał MOCNY konkretny argument zmieniający perspektywę\n-
+        Jeśli rewidujesz: rating, pros, cons LUB quote powinny się rzeczywiście zmienić;
+        revision_rationale wyjaśnia który argument Cię przekonał\n- Jeśli nie rewidujesz:
+        zwróć te same wartości co w pierwotnej opinii, revised=false, revision_rationale=\"\"\n\nZwróć
+        JSON zgodny ze schematem.\n"}],"stream":false,"response_format":{"type":"json_schema","json_schema":{"name":"DeliberationSchema","schema":{"type":"object","properties":{"rating":{"type":"number","description":"Ocena
+        1-5 po uwzględnieniu opinii innych uczestników grupy"},"pros":{"type":"string","description":"Konkretne
+        plusy produktu po rozważeniu opinii innych"},"cons":{"type":"string","description":"Konkretne
+        minusy/obawy po rozważeniu opinii innych"},"quote":{"type":"string","description":"Charakterystyczny
+        cytat w pierwszej osobie po deliberacji"},"revised":{"type":"boolean","description":"Czy
+        zrewidowałaś/zrewidowałeś swoją pierwotną opinię po wysłuchaniu innych? (true=zmieniam,
+        false=zostaję przy swoim)"},"revision_rationale":{"type":"string","description":"Jeśli
+        revised=true: krótko jaki konkretny argument innego uczestnika Cię przekonał.
+        Jeśli revised=false: pusty string."}},"required":["rating","pros","cons","quote","revised","revision_rationale"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.2
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 01 Jun 2026 21:09:42 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a0513354ecdbf56d-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - licencjat-bdxh7k
+      Openai-Processing-Ms:
+      - '2633'
+      Openai-Project:
+      - proj_x36BVFwHkUg7uri49E9W10qe
+      Openai-Version:
+      - '2020-10-01'
+      X-Openai-Proxy-Wasm:
+      - v0.1
+      X-Ratelimit-Limit-Requests:
+      - '10000'
+      X-Ratelimit-Limit-Tokens:
+      - '200000'
+      X-Ratelimit-Remaining-Requests:
+      - '9999'
+      X-Ratelimit-Remaining-Tokens:
+      - '199504'
+      X-Ratelimit-Reset-Requests:
+      - 8.64s
+      X-Ratelimit-Reset-Tokens:
+      - 148ms
+      X-Request-Id:
+      - req_d56edfe568c24b27b4e17c104587855d
+      Set-Cookie:
+      - __cf_bm=HSNz31UY_9DAe1dkaggmR2CoomH67fjtfmPup4PDXoI-1780348178.7058575-1.0.1.1-ETLbbeeJHNsz.l6zATpIsSBX0YNdUUMbVY7knuTcgvcElN94wsssgcDY7SDaMMCRmzrAXcAHLT_ccx0xuA5Ve8YC6t8Ihw.E5BpQ9kHu83584po1dDXKtCbSBUDC0n66;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Mon,
+        01 Jun 2026 21:39:42 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC1EbTRCOXl2WXFWMThkQlkyUEhXNmhHWnk1QWhvaCIsCiAgIm9iamVjdCI6ICJjaGF0LmNvbXBsZXRpb24iLAogICJjcmVhdGVkIjogMTc4MDM0ODE3OSwKICAibW9kZWwiOiAiZ3B0LTRvLW1pbmktMjAyNC0wNy0xOCIsCiAgImNob2ljZXMiOiBbCiAgICB7CiAgICAgICJpbmRleCI6IDAsCiAgICAgICJtZXNzYWdlIjogewogICAgICAgICJyb2xlIjogImFzc2lzdGFudCIsCiAgICAgICAgImNvbnRlbnQiOiAie1wicmF0aW5nXCI6NCxcInByb3NcIjpcIjUgbWludXQgdG8gcmVhbG5lIHcgbW9pbSBncmFmaWt1LCBhIGRvZGF0a293byB0eWdvZG5pb3dlIGNlbGUgbW9nxIUgcG9tw7NjIHcgcmVndWxhcm5vxZtjaVwiLFwiY29uc1wiOlwiY2nEhWdsZSBib2rEmSBzacSZIGtvbGVqbmVqIHN1YnNrcnlwY2ppIGt0w7NyZWogbmllIHd5a29yenlzdGFtLCBhIGNlbmEgdGXFvCBuaWUgamVzdCBiZXogem5hY3plbmlhXCIsXCJxdW90ZVwiOlwibW/FvGUgdHltIHJhemVtIHNpxJkgdWRhLCBhbGUgbXVzesSZIHRvIGRvYnJ6ZSBwcnplbXnFm2xlxIchXCIsXCJyZXZpc2VkXCI6dHJ1ZSxcInJldmlzaW9uX3JhdGlvbmFsZVwiOlwiQXJndW1lbnQgS2Fyb2xpbnkgbyB0eWdvZG5pb3d5Y2ggY2VsYWNoIGRhxYIgbWkgZG8gbXnFm2xlbmlhIOKAlCBtb8W8ZSByemVjenl3acWbY2llIGxlcHN6YSBzdHJ1a3R1cmEgcG9tb8W8ZSBtaSBiYXJkemllaiB6YWFuZ2HFvG93YcSHIHNpxJkgdyBuYXVrxJkuXCJ9IiwKICAgICAgICAicmVmdXNhbCI6IG51bGwsCiAgICAgICAgImFubm90YXRpb25zIjogW10KICAgICAgfSwKICAgICAgImxvZ3Byb2JzIjogbnVsbCwKICAgICAgImZpbmlzaF9yZWFzb24iOiAic3RvcCIKICAgIH0KICBdLAogICJ1c2FnZSI6IHsKICAgICJwcm9tcHRfdG9rZW5zIjogOTI0LAogICAgImNvbXBsZXRpb25fdG9rZW5zIjogMTMxLAogICAgInRvdGFsX3Rva2VucyI6IDEwNTUsCiAgICAicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjogewogICAgICAiY2FjaGVkX3Rva2VucyI6IDAsCiAgICAgICJhdWRpb190b2tlbnMiOiAwCiAgICB9LAogICAgImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOiB7CiAgICAgICJyZWFzb25pbmdfdG9rZW5zIjogMCwKICAgICAgImF1ZGlvX3Rva2VucyI6IDAsCiAgICAgICJhY2NlcHRlZF9wcmVkaWN0aW9uX3Rva2VucyI6IDAsCiAgICAgICJyZWplY3RlZF9wcmVkaWN0aW9uX3Rva2VucyI6IDAKICAgIH0KICB9LAogICJzZXJ2aWNlX3RpZXIiOiAiZGVmYXVsdCIsCiAgInN5c3RlbV9maW5nZXJwcmludCI6ICJmcF9jNmFhMDU4NmM5Igp9Cg==
+  recorded_at: Mon, 01 Jun 2026 21:09:41 GMT
+recorded_with: VCR 6.4.0
