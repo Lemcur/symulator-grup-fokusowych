@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Opinion, type: :model do
-  describe "walidacje" do
-    it "round musi być 0 lub 1" do
+  describe "validations" do
+    it "requires round to be 0 or 1" do
       [0, 1].each do |r|
         expect(build(:opinion, round: r)).to be_valid
       end
@@ -11,15 +11,15 @@ RSpec.describe Opinion, type: :model do
       end
     end
 
-    describe "uniqueness [persona, round]" do
-      it "pozwala na jedną opinię round=0 i jedną round=1 dla tej samej persony" do
+    describe "uniqueness of [persona, round]" do
+      it "allows one opinion per round for the same persona" do
         persona = create(:persona)
         create(:opinion, persona: persona, focus_group: persona.focus_group, round: 0)
         r1 = build(:opinion, :round_one, persona: persona, focus_group: persona.focus_group)
         expect(r1).to be_valid
       end
 
-      it "blokuje duplikat (persona, round=0)" do
+      it "rejects duplicate (persona, round=0)" do
         persona = create(:persona)
         create(:opinion, persona: persona, focus_group: persona.focus_group, round: 0)
         dup = build(:opinion, persona: persona, focus_group: persona.focus_group, round: 0)
@@ -39,17 +39,17 @@ RSpec.describe Opinion, type: :model do
       create(:opinion, :round_one, persona: persona2, focus_group: fg)
     end
 
-    it ".round_zero zwraca tylko round=0" do
+    it ".round_zero returns only round=0 opinions" do
       expect(Opinion.round_zero).to contain_exactly(r0)
     end
 
-    it ".round_one zwraca tylko round=1" do
+    it ".round_one returns only round=1 opinions" do
       expect(Opinion.round_one).to contain_exactly(r1)
     end
   end
 
-  describe "wersjonowanie opinii" do
-    it "persona może mieć round=0 i round=1 z różnym ratingiem" do
+  describe "opinion versioning" do
+    it "allows a persona to have round=0 and round=1 with different ratings" do
       persona = create(:persona)
       r0 = create(:opinion, persona: persona, focus_group: persona.focus_group, round: 0, rating: 5)
       r1 = create(:opinion, :round_one, persona: persona, focus_group: persona.focus_group, rating: 3)
@@ -61,8 +61,8 @@ RSpec.describe Opinion, type: :model do
     end
   end
 
-  describe "enum status (behavior)" do
-    it "pozwala na zmianę statusu pending -> collected" do
+  describe "status enum behavior" do
+    it "allows status transition from pending to collected" do
       op = create(:opinion, status: "pending")
       op.collected!
       expect(op).to be_collected

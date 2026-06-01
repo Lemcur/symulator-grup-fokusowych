@@ -22,6 +22,11 @@ class FocusGroup < ApplicationRecord
     slots: 1
   }
 
+  enum :persona_generator, {
+    llm_single_pass: 0,
+    llm_two_pass: 1
+  }
+
   validates :name, presence: true
   validates :sample_size, numericality: { only_integer: true, greater_than: 0 }
   validate :target_demographics_matches_mode

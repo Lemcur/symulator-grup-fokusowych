@@ -1,33 +1,33 @@
 require "rails_helper"
 
 RSpec.describe FocusGroup, type: :model do
-  describe "walidacje" do
-    it "wymaga name" do
+  describe "validations" do
+    it "requires name" do
       fg = build(:focus_group, name: nil)
       expect(fg).not_to be_valid
       expect(fg.errors[:name]).to be_present
     end
 
-    it "wymaga sample_size > 0" do
+    it "requires sample_size > 0" do
       expect(build(:focus_group, sample_size: 0)).not_to be_valid
       expect(build(:focus_group, sample_size: -1)).not_to be_valid
       expect(build(:focus_group, sample_size: 1)).to be_valid
     end
 
     describe "target_demographics_matches_mode" do
-      it "akceptuje hash dla proportions" do
+      it "accepts a hash for proportions mode" do
         fg = build(:focus_group, generation_mode: "proportions",
                                   target_demographics: { "gender" => { "k" => 0.5, "m" => 0.5 } })
         expect(fg).to be_valid
       end
 
-      it "odrzuca tablicę dla proportions" do
+      it "rejects an array for proportions mode" do
         fg = build(:focus_group, generation_mode: "proportions", target_demographics: [])
         expect(fg).not_to be_valid
         expect(fg.errors[:target_demographics]).to include(/musi być hashem/)
       end
 
-      it "wymaga aby sum(count) == sample_size dla slots" do
+      it "requires sum(count) == sample_size for slots mode" do
         fg = build(:focus_group, :with_slots, sample_size: 4)
         expect(fg).to be_valid
 
@@ -36,7 +36,7 @@ RSpec.describe FocusGroup, type: :model do
         expect(fg.errors[:target_demographics]).to include(/suma count.*sample_size/)
       end
 
-      it "odrzuca hash dla slots" do
+      it "rejects a hash for slots mode" do
         fg = build(:focus_group, generation_mode: "slots",
                                   target_demographics: { "key" => "value" })
         expect(fg).not_to be_valid
@@ -45,8 +45,8 @@ RSpec.describe FocusGroup, type: :model do
     end
   end
 
-  describe "enum statusów (behavior)" do
-    it "obsługuje pełen cykl statusów" do
+  describe "status enum behavior" do
+    it "supports the full status lifecycle" do
       fg = create(:focus_group)
       expect(fg).to be_pending
 
@@ -61,8 +61,8 @@ RSpec.describe FocusGroup, type: :model do
   end
 
   describe "#expand_slots" do
-    context "tryb proportions" do
-      it "zwraca sample_size slotów z wymiarami z target_demographics" do
+    context "proportions mode" do
+      it "returns sample_size slots with dimensions from target_demographics" do
         fg = create(:focus_group, sample_size: 10)
         slots = fg.expand_slots
 
@@ -74,7 +74,7 @@ RSpec.describe FocusGroup, type: :model do
         end
       end
 
-      it "rozkład jest zbliżony do proporcji przy dużym N" do
+      it "distribution is close to proportions for large N" do
         fg = create(:focus_group, sample_size: 1000,
                                    target_demographics: { "gender" => { "kobieta" => 0.7, "mezczyzna" => 0.3 } })
         slots = fg.expand_slots
@@ -84,8 +84,8 @@ RSpec.describe FocusGroup, type: :model do
       end
     end
 
-    context "tryb slots" do
-      it "rozwija sloty z polem count" do
+    context "slots mode" do
+      it "expands slots with count field" do
         fg = create(:focus_group, :with_slots, sample_size: 4)
         slots = fg.expand_slots
 
@@ -100,24 +100,24 @@ RSpec.describe FocusGroup, type: :model do
   describe "#progress" do
     let(:fg) { create(:focus_group, sample_size: 4) }
 
-    it "zwraca 0 dla pending" do
+    it "returns 0 for pending" do
       expect(fg.progress).to eq(0.0)
     end
 
-    it "zwraca proporcję person dla generating_personas" do
+    it "returns persona ratio for generating_personas" do
       fg.update!(status: "generating_personas")
       create_list(:persona, 2, focus_group: fg)
       expect(fg.progress).to eq(0.5)
     end
 
-    it "zwraca proporcję round=0 opinii dla collecting_opinions" do
+    it "returns round=0 opinion ratio for collecting_opinions" do
       fg.update!(status: "collecting_opinions")
       personas = create_list(:persona, 4, focus_group: fg)
       personas.first(3).each { |p| create(:opinion, persona: p, focus_group: fg, round: 0) }
       expect(fg.progress).to eq(0.75)
     end
 
-    it "zwraca proporcję round=1 opinii dla deliberating" do
+    it "returns round=1 opinion ratio for deliberating" do
       fg.update!(status: "deliberating")
       personas = create_list(:persona, 4, focus_group: fg)
       personas.each { |p| create(:opinion, persona: p, focus_group: fg, round: 0) }
@@ -125,7 +125,7 @@ RSpec.describe FocusGroup, type: :model do
       expect(fg.progress).to eq(0.5)
     end
 
-    it "zwraca 1.0 dla completed" do
+    it "returns 1.0 for completed" do
       fg.update!(status: "completed")
       expect(fg.progress).to eq(1.0)
     end
@@ -135,13 +135,13 @@ RSpec.describe FocusGroup, type: :model do
     let(:fg) { create(:focus_group, sample_size: 3) }
     let!(:personas) { create_list(:persona, 3, focus_group: fg) }
 
-    it "all_agents_done? — true gdy wszystkie round=0 zebrane" do
+    it "all_agents_done? is true when all round=0 opinions collected" do
       expect(fg.all_agents_done?).to be false
       personas.each { |p| create(:opinion, persona: p, focus_group: fg, round: 0) }
       expect(fg.all_agents_done?).to be true
     end
 
-    it "all_deliberations_done? — true gdy wszystkie round=1 zebrane" do
+    it "all_deliberations_done? is true when all round=1 opinions collected" do
       personas.each { |p| create(:opinion, persona: p, focus_group: fg, round: 0) }
       expect(fg.all_deliberations_done?).to be false
       personas.each { |p| create(:opinion, :round_one, persona: p, focus_group: fg) }
@@ -149,8 +149,8 @@ RSpec.describe FocusGroup, type: :model do
     end
   end
 
-  describe "kaskadowe usuwanie" do
-    it "usuwa persony, opinions, chairmana, recommendation przy destroy" do
+  describe "cascading delete" do
+    it "destroys personas, opinions, chairman and recommendation on destroy" do
       fg = create(:focus_group)
       personas = create_list(:persona, 2, focus_group: fg)
       personas.each { |p| create(:opinion, persona: p, focus_group: fg, round: 0) }

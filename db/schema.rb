@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_31_192122) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_01_120001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -24,12 +24,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_31_192122) do
   end
 
   create_table "focus_groups", force: :cascade do |t|
+    t.text "brief_summary"
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "deliberation_started_at"
     t.text "error_message"
+    t.jsonb "exclusion_criteria", default: []
     t.integer "generation_mode", default: 0, null: false
+    t.jsonb "inclusion_criteria", default: []
     t.string "name", null: false
+    t.integer "persona_generator", default: 0, null: false
     t.bigint "product_id", null: false
     t.integer "sample_size", null: false
     t.datetime "started_at"
@@ -69,10 +73,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_31_192122) do
     t.jsonb "demographics"
     t.text "description"
     t.bigint "focus_group_id", null: false
+    t.string "llm_model"
+    t.string "llm_provider"
     t.string "name"
     t.jsonb "traits"
     t.datetime "updated_at", null: false
     t.index ["focus_group_id"], name: "index_personas_on_focus_group_id"
+    t.index ["llm_model"], name: "index_personas_on_llm_model"
   end
 
   create_table "products", force: :cascade do |t|

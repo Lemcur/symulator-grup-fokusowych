@@ -1,14 +1,14 @@
 require "rails_helper"
 
 RSpec.describe Chairman, type: :model do
-  describe "walidacje" do
-    it "wymaga llm_model" do
+  describe "validations" do
+    it "requires llm_model" do
       chairman = build(:chairman, llm_model: nil)
       expect(chairman).not_to be_valid
       expect(chairman.errors[:llm_model]).to be_present
     end
 
-    it "blokuje dwóch chairmanów dla jednej sesji" do
+    it "rejects two chairmen for the same focus_group" do
       fg = create(:focus_group)
       create(:chairman, focus_group: fg)
       dup = build(:chairman, focus_group: fg)

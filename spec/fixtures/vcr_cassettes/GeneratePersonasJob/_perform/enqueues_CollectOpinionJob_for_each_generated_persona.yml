@@ -1,0 +1,594 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Jesteś
+        projektantem person badawczych dla polskiej grupy fokusowej.\n\nPRODUKT: Aplikacja
+        do nauki języków\nOPIS PRODUKTU: Mobilna aplikacja do nauki języków obcych.\n\nOGRANICZENIA
+        DEMOGRAFICZNE (MUSISZ ZACHOWAĆ):\n- plec: kobieta\n- wiek: 25-29\n- miejsce_zamieszkania:
+        duze_miasto\n\n\n\nPRZYKŁADY DOBRZE NAPISANYCH PERSON (do naśladowania stylu
+        i głębokości):\nPRZYKŁAD 1 — DOBRZE napisana persona:\n{\n  \"name\": \"Anna
+        Kowalska\",\n  \"description\": \"28-letnia specjalistka ds. marketingu w
+        warszawskiej agencji. Mieszka z partnerem na Mokotowie. Próbuje od dwóch lat
+        opanować hiszpański — kupiła kilka kursów, żaden nie wszedł jej w nawyk. Trochę
+        się tego wstydzi.\",\n  \"demographics\": {\n    \"wiek\": \"25-29\",\n    \"plec\":
+        \"kobieta\",\n    \"miejsce_zamieszkania\": \"duze_miasto\",\n    \"miasto\":
+        \"Warszawa\",\n    \"zawod\": \"Marketing Specialist\"\n  },\n  \"traits\":
+        {\n    \"wartosci\": [\"rozwój zawodowy\", \"work-life balance\", \"relacje\"],\n    \"lifestyle\":
+        \"Pracuje 9-17, wieczorami siłownia lub Netflix. Hiszpański chce w wakacje
+        na wyjazd do Walencji.\",\n    \"obawy_zakupowe\": [\"nie chcę kolejnej subskrypcji
+        której nie wykorzystam\", \"boję się że to znowu chwilowy zapał\"],\n    \"styl_komunikacji\":
+        \"Bezpośredni, lekko ironiczny\"\n  }\n}\n\nPRZYKŁAD 2 — DOBRZE napisana persona:\n{\n  \"name\":
+        \"Marek Szymański\",\n  \"description\": \"42-letni kierownik logistyki w
+        firmie spedycyjnej pod Łodzią. Żona, dwoje dzieci (8 i 12 lat). Awansował
+        dwa lata temu, podstawowy angielski ledwo wystarcza mu na maile z dostawcami
+        z Niemiec. Wieczorami zmęczony, ale szef coraz częściej zwraca uwagę.\",\n  \"demographics\":
+        {\n    \"wiek\": \"40-49\",\n    \"plec\": \"mezczyzna\",\n    \"miejsce_zamieszkania\":
+        \"srednie_miasto\",\n    \"miasto\": \"Łódź\",\n    \"zawod\": \"Kierownik
+        logistyki\"\n  },\n  \"traits\": {\n    \"wartosci\": [\"bezpieczeństwo finansowe\",
+        \"rodzina\", \"praktyczność\"],\n    \"lifestyle\": \"Praca 8-18, weekendy
+        z rodziną. Czasem trening piłki nożnej. Telefon głównie do połączeń i WhatsAppa.\",\n    \"obawy_zakupowe\":
+        [\"nie mam czasu na naukę 30 min dziennie\", \"wątpię czy app nauczy mnie
+        tego co potrzebuję — terminologii spedycyjnej\"],\n    \"styl_komunikacji\":
+        \"Konkretny, oszczędny, sceptyczny\"\n  }\n}\n\n\nWymyśl JEDNĄ realistyczną
+        personę zgodną z ograniczeniami demograficznymi.\nWAŻNE:\n- nie idealizuj
+        — persony mają wady, mieszane uczucia, ograniczenia budżetowe\n- konkretne
+        miasto, zawód, kontekst życiowy (nie ogólnie \"pracuje w korpo\")\n- opisuj
+        językiem prawdopodobnym dla tej osoby (kierownik logistyki z Łodzi mówi inaczej
+        niż Marketing Specialist z Warszawy)\n- zachowaj proporcje: 3-4 zdania backstory,
+        3-5 wartości, 2-3 obawy zakupowe\n\nZwróć JSON zgodny ze schematem.\n"}],"stream":false,"response_format":{"type":"json_schema","json_schema":{"name":"PersonaSchema","schema":{"type":"object","properties":{"name":{"type":"string","description":"Pełne
+        imię i nazwisko (np. ''Anna Kowalska'')"},"description":{"type":"string","description":"3-4
+        zdania backstory: kim jest, gdzie mieszka, czym się zajmuje, jakie ma życie.
+        Konkretnie, nie ogólnie."},"demographics_extras":{"type":"object","properties":{"miasto":{"type":"string","description":"Konkretne
+        polskie miasto"},"zawod":{"type":"string","description":"Konkretny zawód lub
+        stanowisko"}},"required":["miasto","zawod"],"additionalProperties":false,"description":"Dodatkowe
+        atrybuty demograficzne wymyślone przez LLM (te z ograniczeń są dodawane przez
+        kod)"},"traits":{"type":"object","properties":{"wartosci":{"type":"array","description":"3-5
+        wartości życiowych (np. ''rozwój'', ''rodzina'', ''wolność'')","items":{"type":"string"}},"lifestyle":{"type":"string","description":"1-2
+        zdania o stylu życia"},"obawy_zakupowe":{"type":"array","description":"2-3
+        konkretne obawy/wątpliwości tej osoby przy podejmowaniu decyzji zakupowych","items":{"type":"string"}},"styl_komunikacji":{"type":"string","description":"np.
+        bezpośredni, dyplomatyczny, emocjonalny, analityczny, ironiczny"}},"required":["wartosci","lifestyle","obawy_zakupowe","styl_komunikacji"],"additionalProperties":false,"description":"Cechy
+        zachowań i preferencji wpływające na decyzje produktowe"}},"required":["name","description","demographics_extras","traits"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.2
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 01 Jun 2026 20:32:20 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a050fc76dc0df53c-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - licencjat-bdxh7k
+      Openai-Processing-Ms:
+      - '8541'
+      Openai-Project:
+      - proj_x36BVFwHkUg7uri49E9W10qe
+      Openai-Version:
+      - '2020-10-01'
+      X-Openai-Proxy-Wasm:
+      - v0.1
+      X-Ratelimit-Limit-Requests:
+      - '10000'
+      X-Ratelimit-Limit-Tokens:
+      - '200000'
+      X-Ratelimit-Remaining-Requests:
+      - '9999'
+      X-Ratelimit-Remaining-Tokens:
+      - '199322'
+      X-Ratelimit-Reset-Requests:
+      - 8.64s
+      X-Ratelimit-Reset-Tokens:
+      - 203ms
+      X-Request-Id:
+      - req_0cbeb8a1bc894a849059bbb551b397fc
+      Set-Cookie:
+      - __cf_bm=qKNg9UW_CyAj0tZy9gdR3kyyxHtdHRnsN06vHr8r2G8-1780345931.3319223-1.0.1.1-41jMPjCL5pM3UJmVfme5nu0BOpxwS1lqA_tARLoRoZstQlYve3LCtNbptTHvlidzlNlZIBosLaadXP6cY_POUUDowSNc9JBHc6dVe9S0LWWcECx.16qCDZXQyY8XWpaj;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Mon,
+        01 Jun 2026 21:02:20 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC1EbTNhdG1FaUs1YnhTMWNLemNobHI3ckY1bEgzUCIsCiAgIm9iamVjdCI6ICJjaGF0LmNvbXBsZXRpb24iLAogICJjcmVhdGVkIjogMTc4MDM0NTkzMSwKICAibW9kZWwiOiAiZ3B0LTRvLW1pbmktMjAyNC0wNy0xOCIsCiAgImNob2ljZXMiOiBbCiAgICB7CiAgICAgICJpbmRleCI6IDAsCiAgICAgICJtZXNzYWdlIjogewogICAgICAgICJyb2xlIjogImFzc2lzdGFudCIsCiAgICAgICAgImNvbnRlbnQiOiAie1xuICBcIm5hbWVcIjogXCJLYXRhcnp5bmEgTm93YWtcIixcbiAgXCJkZXNjcmlwdGlvblwiOiBcIjI3LWxldG5pYSBhbmFsaXR5Y3prYSBkYW55Y2ggdyBkdcW8ZWogYWdlbmNqaSByZWtsYW1vd2VqIHcgS3Jha293aWUuIE1pZXN6a2EgdyBtYcWCeW0gbWllc3prYW5pdSB3IGNlbnRydW0geiBkd29tYSBrb3RhbWkuIE9ka8SFZCBza3VwacWCYSBzacSZIG5hIGthcmllcnplLCBuaWUgbWlhxYJhIGN6YXN1IG5hIG5hdWvEmSBmcmFuY3Vza2llZ28sIGNob2NpYcW8IG1hcnp5IG8gcG9kcsOzxbx5IGRvIFBhcnnFvGEuIENob8SHIGtpbGthIHJhenkga29yenlzdGHFgmEgeiBhcGxpa2FjamkgZG8gbmF1a2ksIGJyYWt1amUgamVqIG1vdHl3YWNqaSBpIHBvY3p1Y2lhIHBvc3TEmXB1LlwiLFxuICBcImRlbW9ncmFwaGljc19leHRyYXNcIjoge1xuICAgIFwibWlhc3RvXCI6IFwiS3Jha8Ozd1wiLFxuICAgIFwiemF3b2RcIjogXCJBbmFsaXR5ayBkYW55Y2hcIlxuICB9LFxuICBcInRyYWl0c1wiOiB7XG4gICAgXCJ3YXJ0b3NjaVwiOiBbXCJyb3p3w7NqIG9zb2Jpc3R5XCIsIFwibW90eXdhY2phXCIsIFwiY3phcyBkbGEgc2llYmllXCJdLFxuICAgIFwibGlmZXN0eWxlXCI6IFwiUHJhY3VqZSBjesSZc3RvIGRvIHDDs8W6bmEsIHBvIHByYWN5IGNob2R6aSBuYSBqb2fEmSBsdWIgZG8ga2F3aWFybmkuIFdlZWtlbmR5IHNwxJlkemEgeiBwcnp5amFjacOzxYJtaSBsdWIgdyBjenl0ZWxuaSwgYm8gdXdpZWxiaWEgY3p5dGHEhyBrc2nEhcW8a2kuXCIsXG4gICAgXCJvYmF3eV96YWt1cG93ZVwiOiBbXCJuaWUgamVzdGVtIHBld25hLCBjenkgem5hamTEmSBjemFzIG5hIG5hdWvEmVwiLCBcImJvasSZIHNpxJksIMW8ZSBhcGxpa2FjamEgbmllIHduaWVzaWUgbmljIG5vd2VnbyBkbyBtb2plaiBuYXVraVwiLCBcIm5pZSBjaGPEmSBwxYJhY2nEhyB6YSBjb8WbLCBjbyBtb8W8ZSBtaSBzacSZIHpudWR6acSHIHBvIGtpbGt1IGRuaWFjaFwiXSxcbiAgICBcInN0eWxfa29tdW5pa2FjamlcIjogXCJCZXpwb8WbcmVkbmksIGxla2tvIGlyb25pY3pueSwgb3R3YXJ0eSBuYSBkeXNrdXNqZVwiXG4gIH1cbn0iLAogICAgICAgICJyZWZ1c2FsIjogbnVsbCwKICAgICAgICAiYW5ub3RhdGlvbnMiOiBbXQogICAgICB9LAogICAgICAibG9ncHJvYnMiOiBudWxsLAogICAgICAiZmluaXNoX3JlYXNvbiI6ICJzdG9wIgogICAgfQogIF0sCiAgInVzYWdlIjogewogICAgInByb21wdF90b2tlbnMiOiAxMzI2LAogICAgImNvbXBsZXRpb25fdG9rZW5zIjogMzI4LAogICAgInRvdGFsX3Rva2VucyI6IDE2NTQsCiAgICAicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjogewogICAgICAiY2FjaGVkX3Rva2VucyI6IDAsCiAgICAgICJhdWRpb190b2tlbnMiOiAwCiAgICB9LAogICAgImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOiB7CiAgICAgICJyZWFzb25pbmdfdG9rZW5zIjogMCwKICAgICAgImF1ZGlvX3Rva2VucyI6IDAsCiAgICAgICJhY2NlcHRlZF9wcmVkaWN0aW9uX3Rva2VucyI6IDAsCiAgICAgICJyZWplY3RlZF9wcmVkaWN0aW9uX3Rva2VucyI6IDAKICAgIH0KICB9LAogICJzZXJ2aWNlX3RpZXIiOiAiZGVmYXVsdCIsCiAgInN5c3RlbV9maW5nZXJwcmludCI6ICJmcF8yNDc4NzU5N2Q3Igp9Cg==
+  recorded_at: Mon, 01 Jun 2026 20:32:19 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Oto kandydat
+        na personę dla badania produktu \"Aplikacja do nauki języków\":\n\n{\"name\":\"Katarzyna
+        Nowak\",\"description\":\"27-letnia analityczka danych w dużej agencji reklamowej
+        w Krakowie. Mieszka w małym mieszkaniu w centrum z dwoma kotami. Odkąd skupiła
+        się na karierze, nie miała czasu na naukę francuskiego, chociaż marzy o podróży
+        do Paryża. Choć kilka razy korzystała z aplikacji do nauki, brakuje jej motywacji
+        i poczucia postępu.\",\"demographics_extras\":{\"miasto\":\"Kraków\",\"zawod\":\"Analityk
+        danych\"},\"traits\":{\"wartosci\":[\"rozwój osobisty\",\"motywacja\",\"czas
+        dla siebie\"],\"lifestyle\":\"Pracuje często do późna, po pracy chodzi na
+        jogę lub do kawiarni. Weekendy spędza z przyjaciółmi lub w czytelni, bo uwielbia
+        czytać książki.\",\"obawy_zakupowe\":[\"nie jestem pewna, czy znajdę czas
+        na naukę\",\"boję się, że aplikacja nie wniesie nic nowego do mojej nauki\",\"nie
+        chcę płacić za coś, co może mi się znudzić po kilku dniach\"],\"styl_komunikacji\":\"Bezpośredni,
+        lekko ironiczny, otwarty na dyskusje\"}}\n\nTWOJE ZADANIE: krytycznie oceń
+        tę personę i POPRAW ją.\n\nSprawdź każdy z punktów:\n1. Czy jest zbyt idealizowana?
+        (np. \"kochająca rodzinę + rozwinięta zawodowo + ekologicznie świadoma\" =
+        TAK, popraw)\n2. Czy ma realistyczne wady, ograniczenia budżetowe, niepewności,
+        sprzeczności?\n3. Czy detail (miasto, zawód, kontekst) jest konkretny czy
+        generyczny?\n4. Czy styl komunikacji odzwierciedla jej tło demograficzne i
+        zawodowe?\n5. Czy obawy zakupowe są specyficzne dla TEGO produktu, nie generyczne
+        (\"czy będzie warte ceny\")?\n\nZwróć POPRAWIONĄ wersję w tym samym JSON schemacie.\nZachowaj
+        te same wartości pól demographics (wiek, płeć, miejsce_zamieszkania).\nMożesz
+        zmienić imię, miasto, zawód, opis, wszystkie traits.\n"}],"stream":false,"response_format":{"type":"json_schema","json_schema":{"name":"PersonaSchema","schema":{"type":"object","properties":{"name":{"type":"string","description":"Pełne
+        imię i nazwisko (np. ''Anna Kowalska'')"},"description":{"type":"string","description":"3-4
+        zdania backstory: kim jest, gdzie mieszka, czym się zajmuje, jakie ma życie.
+        Konkretnie, nie ogólnie."},"demographics_extras":{"type":"object","properties":{"miasto":{"type":"string","description":"Konkretne
+        polskie miasto"},"zawod":{"type":"string","description":"Konkretny zawód lub
+        stanowisko"}},"required":["miasto","zawod"],"additionalProperties":false,"description":"Dodatkowe
+        atrybuty demograficzne wymyślone przez LLM (te z ograniczeń są dodawane przez
+        kod)"},"traits":{"type":"object","properties":{"wartosci":{"type":"array","description":"3-5
+        wartości życiowych (np. ''rozwój'', ''rodzina'', ''wolność'')","items":{"type":"string"}},"lifestyle":{"type":"string","description":"1-2
+        zdania o stylu życia"},"obawy_zakupowe":{"type":"array","description":"2-3
+        konkretne obawy/wątpliwości tej osoby przy podejmowaniu decyzji zakupowych","items":{"type":"string"}},"styl_komunikacji":{"type":"string","description":"np.
+        bezpośredni, dyplomatyczny, emocjonalny, analityczny, ironiczny"}},"required":["wartosci","lifestyle","obawy_zakupowe","styl_komunikacji"],"additionalProperties":false,"description":"Cechy
+        zachowań i preferencji wpływające na decyzje produktowe"}},"required":["name","description","demographics_extras","traits"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.2
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 01 Jun 2026 20:32:26 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a050fcadcf1b8174-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - licencjat-bdxh7k
+      Openai-Processing-Ms:
+      - '5961'
+      Openai-Project:
+      - proj_x36BVFwHkUg7uri49E9W10qe
+      Openai-Version:
+      - '2020-10-01'
+      X-Openai-Proxy-Wasm:
+      - v0.1
+      X-Ratelimit-Limit-Requests:
+      - '10000'
+      X-Ratelimit-Limit-Tokens:
+      - '200000'
+      X-Ratelimit-Remaining-Requests:
+      - '9999'
+      X-Ratelimit-Remaining-Tokens:
+      - '199553'
+      X-Ratelimit-Reset-Requests:
+      - 8.64s
+      X-Ratelimit-Reset-Tokens:
+      - 134ms
+      X-Request-Id:
+      - req_a2433537fc7f440295f6d78ff64128c7
+      Set-Cookie:
+      - __cf_bm=AbqH6YyFrqEFg2hVDshHFOnD3I9nFDhA0hKqHcQNjGI-1780345940.1213589-1.0.1.1-E.Qnnk518XB5Ebpum10f4_2adOKC9Spq1_a.q0qkpc54tmymoocKLl9B9vks8ZgELKf58syomDrmBWGjW83FFK5x0X1Yv5phUlCAumiwOGULS_bL1dXi93eIdwhAwRDo;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Mon,
+        01 Jun 2026 21:02:26 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC1EbTNiMjlrdG5lQ29ENVg0ODNITXZSTThZajlTVSIsCiAgIm9iamVjdCI6ICJjaGF0LmNvbXBsZXRpb24iLAogICJjcmVhdGVkIjogMTc4MDM0NTk0MCwKICAibW9kZWwiOiAiZ3B0LTRvLW1pbmktMjAyNC0wNy0xOCIsCiAgImNob2ljZXMiOiBbCiAgICB7CiAgICAgICJpbmRleCI6IDAsCiAgICAgICJtZXNzYWdlIjogewogICAgICAgICJyb2xlIjogImFzc2lzdGFudCIsCiAgICAgICAgImNvbnRlbnQiOiAie1wibmFtZVwiOlwiSnVsaWEgS293YWxjenlrXCIsXCJkZXNjcmlwdGlvblwiOlwiMjUtbGV0bmlhIHByb2dyYW1pc3RrYSB6IFdyb2PFgmF3aWEsIHByYWN1asSFY2EgdyBzdGFydHVwaWUgemFqbXVqxIVjeW0gc2nEmSB0ZWNobm9sb2dpxIUgZWR1a2FjeWpuxIUuIE1pZXN6a2EgdyBub3dvY3plc255bSwgbWluaW1hbGlzdHljem55bSBtaWVzemthbml1IHogamVkbnltIHBzZW0uIFBvbWltbyBzd29qZWdvIHphZmFzY3lub3dhbmlhIG5hdWvEhSwgY3rEmXN0byBvZGvFgmFkYSBuYXVrxJkgasSZenlrYSBoaXN6cGHFhHNraWVnbyBuYSBww7PFum5pZWogeiBwb3dvZHUgbmFwacSZdGVnbyBncmFmaWt1IHByYWN5IGkgxbx5Y2lhIHRvd2Fyenlza2llZ28sIGNob2NpYcW8IG1hcnp5IG8gcG9kcsOzxbx5IGRvIEhpc3pwYW5paS5cIixcImRlbW9ncmFwaGljc19leHRyYXNcIjp7XCJtaWFzdG9cIjpcIldyb2PFgmF3XCIsXCJ6YXdvZFwiOlwiUHJvZ3JhbWlzdGthXCJ9LFwidHJhaXRzXCI6e1wid2FydG9zY2lcIjpbXCJwcmFjYSB6ZXNwb8WCb3dhXCIsXCJyb3p3w7NqIG9zb2Jpc3R5XCIsXCJzcG/FgmVjem5vxZvEh1wiXSxcImxpZmVzdHlsZVwiOlwiWnd5a2xlIHByYWN1amUgemRhbG5pZSwgd29sbnkgY3phcyBzcMSZZHphIG5hIGdyYWNoIGtvbXB1dGVyb3d5Y2ggaSBzcG90a2FuaWFjaCB6IHByenlqYWNpw7PFgm1pLiBDZW5pIHNvYmllIGVsYXN0eWN6bm/Fm8SHIGkgY2jEmXRuaWUgendpZWR6YSBub3dlIG1pZWpzY2EuXCIsXCJvYmF3eV96YWt1cG93ZVwiOltcImN6dWrEmSwgxbxlIHpub3d1IG5pZSB6bmFqZMSZIG5hIHRvIGN6YXN1XCIsXCJib2rEmSBzacSZLCDFvGUgYXBsaWthY2phIGLEmWR6aWUgemEgxYJhdHdhIGx1YiB6Ynl0IHRydWRuYVwiLFwibmllIG1hbSBwZXdub8WbY2ksIMW8ZSB6bmFqZMSZIHcgbmllaiBjb8WbLCBjbyBtbmllIG5hcHJhd2TEmSB6YWFuZ2HFvHVqZVwiXSxcInN0eWxfa29tdW5pa2FjamlcIjpcIkJlenBvxZtyZWRuaSwgbGVra28gxbxhcnRvYmxpd3ksIG90d2FydHkgbmEgbm93ZSBkb8Wbd2lhZGN6ZW5pYVwifX0iLAogICAgICAgICJyZWZ1c2FsIjogbnVsbCwKICAgICAgICAiYW5ub3RhdGlvbnMiOiBbXQogICAgICB9LAogICAgICAibG9ncHJvYnMiOiBudWxsLAogICAgICAiZmluaXNoX3JlYXNvbiI6ICJzdG9wIgogICAgfQogIF0sCiAgInVzYWdlIjogewogICAgInByb21wdF90b2tlbnMiOiA5NjYsCiAgICAiY29tcGxldGlvbl90b2tlbnMiOiAzMDIsCiAgICAidG90YWxfdG9rZW5zIjogMTI2OCwKICAgICJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOiB7CiAgICAgICJjYWNoZWRfdG9rZW5zIjogMCwKICAgICAgImF1ZGlvX3Rva2VucyI6IDAKICAgIH0sCiAgICAiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6IHsKICAgICAgInJlYXNvbmluZ190b2tlbnMiOiAwLAogICAgICAiYXVkaW9fdG9rZW5zIjogMCwKICAgICAgImFjY2VwdGVkX3ByZWRpY3Rpb25fdG9rZW5zIjogMCwKICAgICAgInJlamVjdGVkX3ByZWRpY3Rpb25fdG9rZW5zIjogMAogICAgfQogIH0sCiAgInNlcnZpY2VfdGllciI6ICJkZWZhdWx0IiwKICAic3lzdGVtX2ZpbmdlcnByaW50IjogImZwXzI0Nzg3NTk3ZDciCn0K
+  recorded_at: Mon, 01 Jun 2026 20:32:25 GMT
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-4-5-20251001","messages":[{"role":"user","content":[{"type":"text","text":"Jesteś
+        projektantem person badawczych dla polskiej grupy fokusowej.\n\nPRODUKT: Aplikacja
+        do nauki języków\nOPIS PRODUKTU: Mobilna aplikacja do nauki języków obcych.\n\nOGRANICZENIA
+        DEMOGRAFICZNE (MUSISZ ZACHOWAĆ):\n- plec: kobieta\n- wiek: 30-34\n- miejsce_zamieszkania:
+        duze_miasto\n\nDOTYCHCZAS ZAPROJEKTOWANI UCZESTNICY GRUPY (1/2):\n1. Julia
+        Kowalczyk (25-29, Wrocław, Programistka)\n\nZaprojektuj kogoś WYRAŹNIE INNEGO
+        od powyższych — inne imię (nie powtarzaj nazwisk),\ninne miasto jeśli to możliwe,
+        inny typ zawodu, inny styl komunikacji.\nGrupa fokusowa potrzebuje różnorodnych
+        perspektyw.\n\n\nPRZYKŁADY DOBRZE NAPISANYCH PERSON (do naśladowania stylu
+        i głębokości):\nPRZYKŁAD 1 — DOBRZE napisana persona:\n{\n  \"name\": \"Anna
+        Kowalska\",\n  \"description\": \"28-letnia specjalistka ds. marketingu w
+        warszawskiej agencji. Mieszka z partnerem na Mokotowie. Próbuje od dwóch lat
+        opanować hiszpański — kupiła kilka kursów, żaden nie wszedł jej w nawyk. Trochę
+        się tego wstydzi.\",\n  \"demographics\": {\n    \"wiek\": \"25-29\",\n    \"plec\":
+        \"kobieta\",\n    \"miejsce_zamieszkania\": \"duze_miasto\",\n    \"miasto\":
+        \"Warszawa\",\n    \"zawod\": \"Marketing Specialist\"\n  },\n  \"traits\":
+        {\n    \"wartosci\": [\"rozwój zawodowy\", \"work-life balance\", \"relacje\"],\n    \"lifestyle\":
+        \"Pracuje 9-17, wieczorami siłownia lub Netflix. Hiszpański chce w wakacje
+        na wyjazd do Walencji.\",\n    \"obawy_zakupowe\": [\"nie chcę kolejnej subskrypcji
+        której nie wykorzystam\", \"boję się że to znowu chwilowy zapał\"],\n    \"styl_komunikacji\":
+        \"Bezpośredni, lekko ironiczny\"\n  }\n}\n\nPRZYKŁAD 2 — DOBRZE napisana persona:\n{\n  \"name\":
+        \"Marek Szymański\",\n  \"description\": \"42-letni kierownik logistyki w
+        firmie spedycyjnej pod Łodzią. Żona, dwoje dzieci (8 i 12 lat). Awansował
+        dwa lata temu, podstawowy angielski ledwo wystarcza mu na maile z dostawcami
+        z Niemiec. Wieczorami zmęczony, ale szef coraz częściej zwraca uwagę.\",\n  \"demographics\":
+        {\n    \"wiek\": \"40-49\",\n    \"plec\": \"mezczyzna\",\n    \"miejsce_zamieszkania\":
+        \"srednie_miasto\",\n    \"miasto\": \"Łódź\",\n    \"zawod\": \"Kierownik
+        logistyki\"\n  },\n  \"traits\": {\n    \"wartosci\": [\"bezpieczeństwo finansowe\",
+        \"rodzina\", \"praktyczność\"],\n    \"lifestyle\": \"Praca 8-18, weekendy
+        z rodziną. Czasem trening piłki nożnej. Telefon głównie do połączeń i WhatsAppa.\",\n    \"obawy_zakupowe\":
+        [\"nie mam czasu na naukę 30 min dziennie\", \"wątpię czy app nauczy mnie
+        tego co potrzebuję — terminologii spedycyjnej\"],\n    \"styl_komunikacji\":
+        \"Konkretny, oszczędny, sceptyczny\"\n  }\n}\n\n\nWymyśl JEDNĄ realistyczną
+        personę zgodną z ograniczeniami demograficznymi.\nWAŻNE:\n- nie idealizuj
+        — persony mają wady, mieszane uczucia, ograniczenia budżetowe\n- konkretne
+        miasto, zawód, kontekst życiowy (nie ogólnie \"pracuje w korpo\")\n- opisuj
+        językiem prawdopodobnym dla tej osoby (kierownik logistyki z Łodzi mówi inaczej
+        niż Marketing Specialist z Warszawy)\n- zachowaj proporcje: 3-4 zdania backstory,
+        3-5 wartości, 2-3 obawy zakupowe\n\nZwróć JSON zgodny ze schematem.\n"}]}],"stream":false,"max_tokens":64000,"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"name":{"type":"string","description":"Pełne
+        imię i nazwisko (np. ''Anna Kowalska'')"},"description":{"type":"string","description":"3-4
+        zdania backstory: kim jest, gdzie mieszka, czym się zajmuje, jakie ma życie.
+        Konkretnie, nie ogólnie."},"demographics_extras":{"type":"object","properties":{"miasto":{"type":"string","description":"Konkretne
+        polskie miasto"},"zawod":{"type":"string","description":"Konkretny zawód lub
+        stanowisko"}},"required":["miasto","zawod"],"additionalProperties":false,"description":"Dodatkowe
+        atrybuty demograficzne wymyślone przez LLM (te z ograniczeń są dodawane przez
+        kod)"},"traits":{"type":"object","properties":{"wartosci":{"type":"array","description":"3-5
+        wartości życiowych (np. ''rozwój'', ''rodzina'', ''wolność'')","items":{"type":"string"}},"lifestyle":{"type":"string","description":"1-2
+        zdania o stylu życia"},"obawy_zakupowe":{"type":"array","description":"2-3
+        konkretne obawy/wątpliwości tej osoby przy podejmowaniu decyzji zakupowych","items":{"type":"string"}},"styl_komunikacji":{"type":"string","description":"np.
+        bezpośredni, dyplomatyczny, emocjonalny, analityczny, ironiczny"}},"required":["wartosci","lifestyle","obawy_zakupowe","styl_komunikacji"],"additionalProperties":false,"description":"Cechy
+        zachowań i preferencji wpływające na decyzje produktowe"}},"required":["name","description","demographics_extras","traits"],"additionalProperties":false}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.2
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      Anthropic-Version:
+      - '2023-06-01'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 01 Jun 2026 20:32:33 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '50000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '49000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-06-01T20:32:29Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '10000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '10000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-06-01T20:32:35Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '50'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '49'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-06-01T20:32:27Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '60000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '59000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-06-01T20:32:29Z'
+      Request-Id:
+      - req_011CbdBBKucSmDkJroZ1wj2V
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - eb6ff7a3-2a1a-4642-96da-bff6e798dd86
+      Traceresponse:
+      - 00-0ac23a4e74b715d2204728054a26d5ee-6aab2b7c55d44d56-01
+      Server:
+      - cloudflare
+      Vary:
+      - Accept-Encoding
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - _cfuvid=JP.AIy6MUKNC701uUOnBWu9_bp4T6i0tCT58v3cfeJE-1780345946.4041545-1.0.1.1-mSTQVOYmuA87O.WBybjzyQAJadQqURLwaJdNa9let7U;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.anthropic.com
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a050fcd50b40028d-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS00LTUtMjAyNTEwMDEiLCJpZCI6Im1zZ18wMUg4UTNhQThWdXN0TDNCbUtRNTU2cjQiLCJ0eXBlIjoibWVzc2FnZSIsInJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjpbeyJ0eXBlIjoidGV4dCIsInRleHQiOiJ7XCJuYW1lXCI6XCJLYXRhcnp5bmEgTGV3YW5kb3dza2FcIixcImRlc2NyaXB0aW9uXCI6XCIzMi1sZXRuaWEgbmF1Y3p5Y2llbGthIGFuZ2llbHNraWVnbyB3IGxpY2V1bSB3IEtyYWtvd2llLiBNaWVzemthIHNhbWEgdyBzdGFyeW0gbWllc3prYW5pdSBuYSBQb2Rnw7NyenUsIGt0w7NyYSB3eXJlbW9udG93YcWCYSBzYW1hLiBPZCBsYXQgY2hjaWHFgmEgbmF1Y3p5xIcgc2nEmSB3xYJvc2tpZWdvLCBhYnkgbcOzYyBjenl0YcSHIG9yeWdpbmFsbmUgdGVrc3R5IG9yYXogbGVwaWVqIGtvbXVuaWtvd2HEhyBzacSZIHogYmFiY2nEhSB6ZSBTemN6ZWNpbmEsIGt0w7NyYSBwb2Nob2R6aSB6IFfFgm9jaC4gVWN6eSBwcnpleiBjYcWCeSBkemllxYQsIHdpZWN6b3JhbWkgamVzdCB6bcSZY3pvbmEsIGFsZSBjenVqZSBzacSZIHdpbsSZLCDFvGUgbmllIGRva2/FhGN6ecWCYSB0ZWdvLCBjbyB6YWN6xJnFgmEuXCIsXCJkZW1vZ3JhcGhpY3NfZXh0cmFzXCI6e1wibWlhc3RvXCI6XCJLcmFrw7N3XCIsXCJ6YXdvZFwiOlwiTmF1Y3p5Y2llbGthIGFuZ2llbHNraWVnb1wifSxcInRyYWl0c1wiOntcIndhcnRvc2NpXCI6W1wic2Ftb2Rvc2tvbmFsZW5pZVwiLFwia3VsdHVyYVwiLFwibmllemFsZcW8bm/Fm8SHXCIsXCJyb2R6aW5hXCJdLFwibGlmZXN0eWxlXCI6XCJQcmFjdWplIDgtMTYsIGFrdHl3bmllIHNwxJlkemEgd2Vla2VuZHkgbmEgc3BhY2VyYWNoIHBvIEtyYWtvd2llLCBjaG9kemkgbmEgd3lzdGF3eSBpIGRvIGtpbiBzdHVkeWpueWNoLiBVbmlrYSBkdcW8eWNoIHd5ZGF0a8OzdywgZGJhasSFYyBvIG9zemN6xJlkbm/Fm2NpIG5hIHJlbW9udC4gQ3phc2FtaSBwb2N6dWNpZSB3aW55LCDFvGUgemFtaWFzdCB1Y3p5xIcgd8WCb3NraWVnbywgc2Nyb2xsdWplIHRlbGVmb24uXCIsXCJvYmF3eV96YWt1cG93ZVwiOltcIm9iYXdpYW0gc2nEmSDFvGUga29sZWpuYSBhcGxpa2FjamEgYsSZZHppZSBudWRuYSBpIHBvd3RhcnphasSFY2Egc2nEmSBqYWsgcG9kcsSZY3puaWtpIHN6a29sbmVcIixcIm5pZSBjaGPEmSB3eWRhd2HEhyBkdcW8byBwaWVuacSZZHp5IG5hIGFib25hbWVudCwgbWFtIGp1xbwgTmV0ZmxpeGEgaSBzcG9ydG93Y2FcIixcImJvamUgc2nEmSDFvGUgd8WCb3NraSB3eW1hZ2EgemJ5dCBkdcW8byBzeXN0ZW1hdHljem5laiBwcmFjeSwgxbxlYnkgdG8gdXRyenltYcSHXCJdLFwic3R5bF9rb211bmlrYWNqaVwiOlwiUmVmbGVrc3lqbnksIG1pxJlra2ksIGN6YXNhbWkgc2Ftb2tyeXR5Y3pueSwgbHViaSBkeXNrdXRvd2HEhyBvIG1vdHl3YWNqaSB6YW1pYXN0IHR5bGtvIG8gZmFrdGFjaFwifX0ifV0sInN0b3BfcmVhc29uIjoiZW5kX3R1cm4iLCJzdG9wX3NlcXVlbmNlIjpudWxsLCJzdG9wX2RldGFpbHMiOm51bGwsInVzYWdlIjp7ImlucHV0X3Rva2VucyI6MTk5MSwiY2FjaGVfY3JlYXRpb25faW5wdXRfdG9rZW5zIjowLCJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfY3JlYXRpb24iOnsiZXBoZW1lcmFsXzVtX2lucHV0X3Rva2VucyI6MCwiZXBoZW1lcmFsXzFoX2lucHV0X3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjQzNSwic2VydmljZV90aWVyIjoic3RhbmRhcmQiLCJpbmZlcmVuY2VfZ2VvIjoibm90X2F2YWlsYWJsZSJ9fQ==
+  recorded_at: Mon, 01 Jun 2026 20:32:32 GMT
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-4-5-20251001","messages":[{"role":"user","content":[{"type":"text","text":"Oto
+        kandydat na personę dla badania produktu \"Aplikacja do nauki języków\":\n\n{\"name\":\"Katarzyna
+        Lewandowska\",\"description\":\"32-letnia nauczycielka angielskiego w liceum
+        w Krakowie. Mieszka sama w starym mieszkaniu na Podgórzu, która wyremontowała
+        sama. Od lat chciała nauczyć się włoskiego, aby móc czytać oryginalne teksty
+        oraz lepiej komunikować się z babcią ze Szczecina, która pochodzi z Włoch.
+        Uczy przez cały dzień, wieczorami jest zmęczona, ale czuje się winę, że nie
+        dokończyła tego, co zaczęła.\",\"demographics_extras\":{\"miasto\":\"Kraków\",\"zawod\":\"Nauczycielka
+        angielskiego\"},\"traits\":{\"wartosci\":[\"samodoskonalenie\",\"kultura\",\"niezależność\",\"rodzina\"],\"lifestyle\":\"Pracuje
+        8-16, aktywnie spędza weekendy na spacerach po Krakowie, chodzi na wystawy
+        i do kin studyjnych. Unika dużych wydatków, dbając o oszczędności na remont.
+        Czasami poczucie winy, że zamiast uczyć włoskiego, scrolluje telefon.\",\"obawy_zakupowe\":[\"obawiam
+        się że kolejna aplikacja będzie nudna i powtarzająca się jak podręczniki szkolne\",\"nie
+        chcę wydawać dużo pieniędzy na abonament, mam już Netflixa i sportowca\",\"boje
+        się że włoski wymaga zbyt dużo systematycznej pracy, żeby to utrzymać\"],\"styl_komunikacji\":\"Refleksyjny,
+        miękki, czasami samokrytyczny, lubi dyskutować o motywacji zamiast tylko o
+        faktach\"}}\n\nTWOJE ZADANIE: krytycznie oceń tę personę i POPRAW ją.\n\nSprawdź
+        każdy z punktów:\n1. Czy jest zbyt idealizowana? (np. \"kochająca rodzinę
+        + rozwinięta zawodowo + ekologicznie świadoma\" = TAK, popraw)\n2. Czy ma
+        realistyczne wady, ograniczenia budżetowe, niepewności, sprzeczności?\n3.
+        Czy detail (miasto, zawód, kontekst) jest konkretny czy generyczny?\n4. Czy
+        styl komunikacji odzwierciedla jej tło demograficzne i zawodowe?\n5. Czy obawy
+        zakupowe są specyficzne dla TEGO produktu, nie generyczne (\"czy będzie warte
+        ceny\")?\n\nZwróć POPRAWIONĄ wersję w tym samym JSON schemacie.\nZachowaj
+        te same wartości pól demographics (wiek, płeć, miejsce_zamieszkania).\nMożesz
+        zmienić imię, miasto, zawód, opis, wszystkie traits.\n"}]}],"stream":false,"max_tokens":64000,"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"name":{"type":"string","description":"Pełne
+        imię i nazwisko (np. ''Anna Kowalska'')"},"description":{"type":"string","description":"3-4
+        zdania backstory: kim jest, gdzie mieszka, czym się zajmuje, jakie ma życie.
+        Konkretnie, nie ogólnie."},"demographics_extras":{"type":"object","properties":{"miasto":{"type":"string","description":"Konkretne
+        polskie miasto"},"zawod":{"type":"string","description":"Konkretny zawód lub
+        stanowisko"}},"required":["miasto","zawod"],"additionalProperties":false,"description":"Dodatkowe
+        atrybuty demograficzne wymyślone przez LLM (te z ograniczeń są dodawane przez
+        kod)"},"traits":{"type":"object","properties":{"wartosci":{"type":"array","description":"3-5
+        wartości życiowych (np. ''rozwój'', ''rodzina'', ''wolność'')","items":{"type":"string"}},"lifestyle":{"type":"string","description":"1-2
+        zdania o stylu życia"},"obawy_zakupowe":{"type":"array","description":"2-3
+        konkretne obawy/wątpliwości tej osoby przy podejmowaniu decyzji zakupowych","items":{"type":"string"}},"styl_komunikacji":{"type":"string","description":"np.
+        bezpośredni, dyplomatyczny, emocjonalny, analityczny, ironiczny"}},"required":["wartosci","lifestyle","obawy_zakupowe","styl_komunikacji"],"additionalProperties":false,"description":"Cechy
+        zachowań i preferencji wpływające na decyzje produktowe"}},"required":["name","description","demographics_extras","traits"],"additionalProperties":false}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.2
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      Anthropic-Version:
+      - '2023-06-01'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 529
+      message: "<none>"
+    headers:
+      Date:
+      - Mon, 01 Jun 2026 20:33:24 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Should-Retry:
+      - 'true'
+      Request-Id:
+      - req_011CbdBBrHEBwpKC8tBXAz8z
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - eb6ff7a3-2a1a-4642-96da-bff6e798dd86
+      Traceresponse:
+      - 00-f7851ebfc3b48c52f21bbfa879ecc875-c2920201492d5b8e-01
+      Server:
+      - cloudflare
+      Vary:
+      - Accept-Encoding
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - _cfuvid=lU2EqRNbREPljuSHDu7dsPpLxTGEwfJeotyIHbPPhEA-1780345953.4992244-1.0.1.1-g9YVUuYJF1mhehSCSTvjSE_ygxSd727uCG4fT4doqX8;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.anthropic.com
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a050fd015d01b1ac-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: '{"type":"error","error":{"type":"overloaded_error","message":"Overloaded"},"request_id":"req_011CbdBBrHEBwpKC8tBXAz8z"}'
+  recorded_at: Mon, 01 Jun 2026 20:33:23 GMT
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-4-5-20251001","messages":[{"role":"user","content":[{"type":"text","text":"Oto
+        kandydat na personę dla badania produktu \"Aplikacja do nauki języków\":\n\n{\"name\":\"Katarzyna
+        Lewandowska\",\"description\":\"32-letnia nauczycielka angielskiego w liceum
+        w Krakowie. Mieszka sama w starym mieszkaniu na Podgórzu, która wyremontowała
+        sama. Od lat chciała nauczyć się włoskiego, aby móc czytać oryginalne teksty
+        oraz lepiej komunikować się z babcią ze Szczecina, która pochodzi z Włoch.
+        Uczy przez cały dzień, wieczorami jest zmęczona, ale czuje się winę, że nie
+        dokończyła tego, co zaczęła.\",\"demographics_extras\":{\"miasto\":\"Kraków\",\"zawod\":\"Nauczycielka
+        angielskiego\"},\"traits\":{\"wartosci\":[\"samodoskonalenie\",\"kultura\",\"niezależność\",\"rodzina\"],\"lifestyle\":\"Pracuje
+        8-16, aktywnie spędza weekendy na spacerach po Krakowie, chodzi na wystawy
+        i do kin studyjnych. Unika dużych wydatków, dbając o oszczędności na remont.
+        Czasami poczucie winy, że zamiast uczyć włoskiego, scrolluje telefon.\",\"obawy_zakupowe\":[\"obawiam
+        się że kolejna aplikacja będzie nudna i powtarzająca się jak podręczniki szkolne\",\"nie
+        chcę wydawać dużo pieniędzy na abonament, mam już Netflixa i sportowca\",\"boje
+        się że włoski wymaga zbyt dużo systematycznej pracy, żeby to utrzymać\"],\"styl_komunikacji\":\"Refleksyjny,
+        miękki, czasami samokrytyczny, lubi dyskutować o motywacji zamiast tylko o
+        faktach\"}}\n\nTWOJE ZADANIE: krytycznie oceń tę personę i POPRAW ją.\n\nSprawdź
+        każdy z punktów:\n1. Czy jest zbyt idealizowana? (np. \"kochająca rodzinę
+        + rozwinięta zawodowo + ekologicznie świadoma\" = TAK, popraw)\n2. Czy ma
+        realistyczne wady, ograniczenia budżetowe, niepewności, sprzeczności?\n3.
+        Czy detail (miasto, zawód, kontekst) jest konkretny czy generyczny?\n4. Czy
+        styl komunikacji odzwierciedla jej tło demograficzne i zawodowe?\n5. Czy obawy
+        zakupowe są specyficzne dla TEGO produktu, nie generyczne (\"czy będzie warte
+        ceny\")?\n\nZwróć POPRAWIONĄ wersję w tym samym JSON schemacie.\nZachowaj
+        te same wartości pól demographics (wiek, płeć, miejsce_zamieszkania).\nMożesz
+        zmienić imię, miasto, zawód, opis, wszystkie traits.\n"}]}],"stream":false,"max_tokens":64000,"output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"name":{"type":"string","description":"Pełne
+        imię i nazwisko (np. ''Anna Kowalska'')"},"description":{"type":"string","description":"3-4
+        zdania backstory: kim jest, gdzie mieszka, czym się zajmuje, jakie ma życie.
+        Konkretnie, nie ogólnie."},"demographics_extras":{"type":"object","properties":{"miasto":{"type":"string","description":"Konkretne
+        polskie miasto"},"zawod":{"type":"string","description":"Konkretny zawód lub
+        stanowisko"}},"required":["miasto","zawod"],"additionalProperties":false,"description":"Dodatkowe
+        atrybuty demograficzne wymyślone przez LLM (te z ograniczeń są dodawane przez
+        kod)"},"traits":{"type":"object","properties":{"wartosci":{"type":"array","description":"3-5
+        wartości życiowych (np. ''rozwój'', ''rodzina'', ''wolność'')","items":{"type":"string"}},"lifestyle":{"type":"string","description":"1-2
+        zdania o stylu życia"},"obawy_zakupowe":{"type":"array","description":"2-3
+        konkretne obawy/wątpliwości tej osoby przy podejmowaniu decyzji zakupowych","items":{"type":"string"}},"styl_komunikacji":{"type":"string","description":"np.
+        bezpośredni, dyplomatyczny, emocjonalny, analityczny, ironiczny"}},"required":["wartosci","lifestyle","obawy_zakupowe","styl_komunikacji"],"additionalProperties":false,"description":"Cechy
+        zachowań i preferencji wpływające na decyzje produktowe"}},"required":["name","description","demographics_extras","traits"],"additionalProperties":false}}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.2
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      Anthropic-Version:
+      - '2023-06-01'
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 01 Jun 2026 20:33:31 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '50000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '49000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-06-01T20:33:26Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '10000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '10000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-06-01T20:33:34Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '50'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '49'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-06-01T20:33:26Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '60000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '59000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-06-01T20:33:26Z'
+      Request-Id:
+      - req_011CbdBFdbMBm6sKCHwmCwev
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - eb6ff7a3-2a1a-4642-96da-bff6e798dd86
+      Traceresponse:
+      - 00-baad1903193ee2ca3fc2fae3c2179d19-462151b18c975123-01
+      Server:
+      - cloudflare
+      Vary:
+      - Accept-Encoding
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - _cfuvid=1pWOVOg2E4MmYTAgr9UPIuK2CWHVrVFAjh_TkSrrTx0-1780346004.804207-1.0.1.1-D0EVJThThYFhgxVjCt.k.aIPmYOvacB.zwN2S8Vb41s;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.anthropic.com
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a050fe42094c2f91-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS00LTUtMjAyNTEwMDEiLCJpZCI6Im1zZ18wMVduVUxqVHhaOGR0cDRKMnB5QXBwMlMiLCJ0eXBlIjoibWVzc2FnZSIsInJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjpbeyJ0eXBlIjoidGV4dCIsInRleHQiOiJ7XCJuYW1lXCI6XCJLYXRhcnp5bmEgTGV3YW5kb3dza2FcIixcImRlc2NyaXB0aW9uXCI6XCIzMi1sZXRuaWEgbmF1Y3p5Y2llbGthIGFuZ2llbHNraWVnbyB3IGxpY2V1bSBpbS4gU8WCb3dhY2tpZWdvIHcgS3Jha293aWUuIE1pZXN6a2Egc2FtYSB3IHN0YXJ5bSBtaWVzemthbml1IG5hIFBvZGfDs3J6dSwga3TDs3JlIHNhbWEgcmVtb250b3dhxYJhLiBPZCBwacSZY2l1IGxhdCBtw7N3aSwgxbxlIG5hdWN6eSBzacSZIHfFgm9za2llZ28gZGxhIGJhYmNpIHplIFN6Y3plY2luYSwgYWxlIG5pZ2R5IG5pZSB6YWN6xJnFgmEgc3lzdGVtYXR5Y3puaWUuIFVjenkgcHJ6ZXogY2HFgnkgZHppZcWELCB3aWVjem9yYW1pIGplc3Qgem3EmWN6b25hLCBwcmFjdWplIHphIG1hxYJvIHphcmFiaWFqxIVjYS4gUG9jenVjaWUgd2lueSBrYXJtaSBqxIUsIGdkeSB3aWR6aSBsZcW8xIVjZSBwb2RyxJljem5pa2ksIGFsZSB6YXp3eWN6YWogbmEgYXBsaWthY2plIG3Ds3dpICdtb8W8ZSBqdXRybycuXCIsXCJkZW1vZ3JhcGhpY3NfZXh0cmFzXCI6e1wibWlhc3RvXCI6XCJLcmFrw7N3XCIsXCJ6YXdvZFwiOlwiTmF1Y3p5Y2llbGthIGFuZ2llbHNraWVnbyB3IGxpY2V1bVwifSxcInRyYWl0c1wiOntcIndhcnRvc2NpXCI6W1wic2Ftb2R6aWVsbm/Fm8SHXCIsXCJibGlza2/Fm8SHIHogYmFiY2nEhVwiLFwicm96d8OzaiB6YXdvZG93eVwiLFwicHJha3R5Y3pub8WbxIdcIl0sXCJsaWZlc3R5bGVcIjpcIlByYWN1amUgOC0xNiwgd2llY3pvcmFtaSB6bcSZY3pvbmEsIHdlZWtlbmR5IGRsYSBzaWViaWUgLSBzcGFjZXJ5LCBrc2nEhcW8a2ksIHNlcmlhbG93ZSBtYXJhdG9ueS4gV3lkYWplIHNpxJkgb3N6Y3rEmWRuaWUsIGJvaSBzacSZIHpvYm93acSFemHFhCBmaW5hbnNvd3ljaC4gSG9iYnk6IG9ic2Vyd293YW5pZSwgY3p5dGFuaWUgcmVjZW56amksIGFsZSByemFka28gZmluYWxpem93YW5pZSBkZWN5emppLlwiLFwib2Jhd3lfemFrdXBvd2VcIjpbXCJKdcW8IGt1cGnFgmFtIHRyenkga3Vyc3kgb25saW5lLCBrdMOzcmUgbWlhxYJ5IGJ5xIcgJ29zdGF0ZWN6bnltIHJvendpxIV6YW5pZW0nIC0gb2Jhd2lhbSBzacSZLCDFvGUgdGEgYXBsaWthY2phIGLEmWR6aWUgcG9kb2JueW0gbWFydHd5bSBpbndlc3R5Y2rEhVwiLFwiTmllIG1hbSBlbmVyZ2lpIHdpZWN6b3JlbSBuYSBrb2xlam55IG9ib3dpxIV6ZWssIG5hd2V0IGplxZtsaSBixJlkemllIHphYmF3bnkgLSBiaW9yxJkgMTAwIHrFgm90eWNoIG1pZXNpxJljem5pZSBpIHPFgmFibyBtbmllIHRvIG1vdHl3dWplXCIsXCJXxYJvc2tpIHVjenkgc2nEmSB3b2xuaWVqIG5pxbwgYW5naWVsc2tpLCBib2rEmSBzacSZIGZydXN0cmFjamkgaSBwb2N6dWNpYSwgxbxlIHptYXJub3dhxYJhbSBwaWVuacSFZHplIG5hIGNvxZssIGNvIHByemVyb8WbbmllIG1vamUgbW/FvGxpd2/Fm2NpXCJdLFwic3R5bF9rb211bmlrYWNqaVwiOlwiU2NlcHR5Y3puYSwgYW5hbGl0eWN6bmEsIGx1YmkgcHJ6ZWFuYWxpem93YcSHIHphbmltIGt1cGksIHptxJljem9uYSBvYmlldG5pY2FtaSwgemHFvGFydGEgdyBodW1vcnplIG5hIHfFgmFzbnkgdGVtYXRcIn19In1dLCJzdG9wX3JlYXNvbiI6ImVuZF90dXJuIiwic3RvcF9zZXF1ZW5jZSI6bnVsbCwic3RvcF9kZXRhaWxzIjpudWxsLCJ1c2FnZSI6eyJpbnB1dF90b2tlbnMiOjE1NjcsImNhY2hlX2NyZWF0aW9uX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfcmVhZF9pbnB1dF90b2tlbnMiOjAsImNhY2hlX2NyZWF0aW9uIjp7ImVwaGVtZXJhbF81bV9pbnB1dF90b2tlbnMiOjAsImVwaGVtZXJhbF8xaF9pbnB1dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjo1MzAsInNlcnZpY2VfdGllciI6InN0YW5kYXJkIiwiaW5mZXJlbmNlX2dlbyI6Im5vdF9hdmFpbGFibGUifX0=
+  recorded_at: Mon, 01 Jun 2026 20:33:30 GMT
+recorded_with: VCR 6.4.0

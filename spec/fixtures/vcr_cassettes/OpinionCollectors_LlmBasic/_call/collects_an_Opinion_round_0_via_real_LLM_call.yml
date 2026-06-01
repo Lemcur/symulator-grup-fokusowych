@@ -1,0 +1,102 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Wcielasz
+        się w realnego respondenta polskiej grupy fokusowej. Odpowiadasz JAKO ta osoba.\n\nIMIĘ:
+        Anna Kowalska\nOPIS: 28-letnia marketing specialist z Warszawy, próbuje uczyć
+        się hiszpańskiego od dwóch lat bez sukcesu.\nDEMOGRAFIA: {\"wiek\":\"25-29\",\"plec\":\"kobieta\",\"miasto\":\"Warszawa\",\"zawod\":\"Marketing
+        Specialist\"}\nWARTOŚCI: rozwój zawodowy, work-life balance\nLIFESTYLE: Pracuje
+        9-17, wieczorami siłownia lub Netflix.\nOBAWY ZAKUPOWE: kolejna subskrypcja
+        której nie wykorzystam\nSTYL KOMUNIKACJI: Bezpośredni, lekko ironiczny\n\nPRODUKT
+        DO OCENY:\nAplikacja do nauki języków\nMobilna aplikacja do nauki języków
+        obcych.\n\nTwoje zadanie: WYPOWIEDZ SIĘ na temat tego produktu zgodnie z osobowością
+        z brief''u powyżej.\n\n- Oceń produkt w skali 1-5 (1=zdecydowanie nie kupię/nie
+        użyję, 5=zdecydowanie tak)\n- Wymień konkretne PLUSY ważne dla CIEBIE — nie
+        ogólne (\"dobra aplikacja\"), tylko specyficzne (\"po godzinach mam tylko
+        15 minut zanim zasnę\")\n- Wymień konkretne MINUSY / obawy / zastrzeżenia
+        jakie masz wobec tego produktu\n- Daj jeden charakterystyczny CYTAT w pierwszej
+        osobie — coś co naprawdę powiedziałabyś/powiedziałbyś o tym produkcie\n\nMów
+        stylu komunikacji typowym dla swojej osoby. Możesz być sceptyczny/sceptyczna.
+        Nie idealizuj.\n\nZwróć JSON zgodny ze schematem.\n"}],"stream":false,"response_format":{"type":"json_schema","json_schema":{"name":"OpinionSchema","schema":{"type":"object","properties":{"rating":{"type":"number","description":"Ocena
+        produktu w skali 1-5 (1=zdecydowanie nie kupię/nie użyję, 5=zdecydowanie kupię/użyję)"},"pros":{"type":"string","description":"Konkretne
+        plusy produktu z perspektywy TEJ osoby (nie ogólne marketingowe slogany)"},"cons":{"type":"string","description":"Konkretne
+        minusy, obawy, zastrzeżenia tej osoby"},"quote":{"type":"string","description":"Charakterystyczny
+        cytat w pierwszej osobie — coś co ta osoba naprawdę by powiedziała o produkcie"}},"required":["rating","pros","cons","quote"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.2
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 01 Jun 2026 20:20:04 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a050ea8cbb1d772e-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - licencjat-bdxh7k
+      Openai-Processing-Ms:
+      - '6221'
+      Openai-Project:
+      - proj_x36BVFwHkUg7uri49E9W10qe
+      Openai-Version:
+      - '2020-10-01'
+      X-Openai-Proxy-Wasm:
+      - v0.1
+      X-Ratelimit-Limit-Requests:
+      - '10000'
+      X-Ratelimit-Limit-Tokens:
+      - '200000'
+      X-Ratelimit-Remaining-Requests:
+      - '9999'
+      X-Ratelimit-Remaining-Tokens:
+      - '199671'
+      X-Ratelimit-Reset-Requests:
+      - 8.64s
+      X-Ratelimit-Reset-Tokens:
+      - 98ms
+      X-Request-Id:
+      - req_a44be3576a244482814cc23e73f8d089
+      Set-Cookie:
+      - __cf_bm=VLjJgBWubhRcMx1pFIh_WtXpMsO9xi9la8s9U_XIh04-1780345197.554203-1.0.1.1-wBcdEZg5NUeLJ_O8lsydlriqMjLEPpKdZ_GrvLwy1qITnnGzTEQ.3wFW.USj8XJFus6G9YLxhlCqHOIENpCKyn_gRf5upkn3SmdS3qcwsdewfxBjafavlbJMZ99C3OS0;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Mon,
+        01 Jun 2026 20:50:04 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC1EbTNQNHJ0WVNaeXQyS0ZRcFRGWk40ejhDT0laciIsCiAgIm9iamVjdCI6ICJjaGF0LmNvbXBsZXRpb24iLAogICJjcmVhdGVkIjogMTc4MDM0NTE5OCwKICAibW9kZWwiOiAiZ3B0LTRvLW1pbmktMjAyNC0wNy0xOCIsCiAgImNob2ljZXMiOiBbCiAgICB7CiAgICAgICJpbmRleCI6IDAsCiAgICAgICJtZXNzYWdlIjogewogICAgICAgICJyb2xlIjogImFzc2lzdGFudCIsCiAgICAgICAgImNvbnRlbnQiOiAie1wicmF0aW5nXCI6MyxcInByb3NcIjpcIkFwbGlrYWNqYSB6YXBld25pYSBrcsOzdGtpLCBwcnp5c3TEmXBueSBmb3JtYXQgbGVrY2ppIOKAlCBpZGVhbG55IHBvIHByYWN5LCBraWVkeSBjemFzYW1pIG1hbSB0eWxrbyAxNSBtaW51dCBuYSBuYXVrxJkgcHJ6ZWQgc25lbS4gTW/FvGxpd2/Fm8SHIMSHd2ljemVuaWEgc8WCb3duaWN0d2EgdyBmb3JtaWUgZ2llciBzcHJhd2lhLCDFvGUgamVzdCB0byBvIHdpZWxlIGJhcmR6aWVqIHByenlqZW1uZSBuacW8IHRyYWR5Y3lqbmUgbWV0b2R5LlwiLFwiY29uc1wiOlwiQm9qxJkgc2nEmSwgxbxlIHpub3d1IGLEmWTEmSBtaWHFgmEga29sZWpuxIUgc3Vic2tyeXBjasSZLCBrdMOzcmVqIG5pZSB3eWtvcnp5c3RhbS4gVHJlbm93YcWCYW0gaGlzenBhxYRza2kganXFvCBwcnpleiBkd2EgbGF0YSBpIG5pZSBjaGPEmSBpbndlc3Rvd2HEhyB3IGNvxZssIGNvIHpuw7N3IHNrb8WEY3p5IHNpxJkgbmEgcGllcndzenltIHBvemlvbWllLiBQb3phIHR5bSBvYmF3aWFtIHNpxJksIMW8ZSBicmFrIGtvbnRha3R1IHogxbx5d3ltIG5hdWN6eWNpZWxlbSBtb8W8ZSBvZ3JhbmljennEhyBtb2plIHBvc3TEmXB5LlwiLFwicXVvdGVcIjpcIk15xZtsxJksIMW8ZSB6bm93dSBrdXBpxJkgYXBsaWthY2rEmSwga3TDs3JhIGLEmWR6aWUgc3RhxYJhIG5hIG1vaW0gdGVsZWZvbmllIGkgcHJ6eXBvbWluYcWCYSBtaSwgamFrIGJhcmR6byBjaGPEmSBtw7N3acSHIHBvIGhpc3pwYcWEc2t1LCBhbGUgbmlnZHkgdGVnbyBuaWUgenJvYmnEmS5cIn0iLAogICAgICAgICJyZWZ1c2FsIjogbnVsbCwKICAgICAgICAiYW5ub3RhdGlvbnMiOiBbXQogICAgICB9LAogICAgICAibG9ncHJvYnMiOiBudWxsLAogICAgICAiZmluaXNoX3JlYXNvbiI6ICJzdG9wIgogICAgfQogIF0sCiAgInVzYWdlIjogewogICAgInByb21wdF90b2tlbnMiOiA2MTUsCiAgICAiY29tcGxldGlvbl90b2tlbnMiOiAyMTksCiAgICAidG90YWxfdG9rZW5zIjogODM0LAogICAgInByb21wdF90b2tlbnNfZGV0YWlscyI6IHsKICAgICAgImNhY2hlZF90b2tlbnMiOiAwLAogICAgICAiYXVkaW9fdG9rZW5zIjogMAogICAgfSwKICAgICJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjogewogICAgICAicmVhc29uaW5nX3Rva2VucyI6IDAsCiAgICAgICJhdWRpb190b2tlbnMiOiAwLAogICAgICAiYWNjZXB0ZWRfcHJlZGljdGlvbl90b2tlbnMiOiAwLAogICAgICAicmVqZWN0ZWRfcHJlZGljdGlvbl90b2tlbnMiOiAwCiAgICB9CiAgfSwKICAic2VydmljZV90aWVyIjogImRlZmF1bHQiLAogICJzeXN0ZW1fZmluZ2VycHJpbnQiOiAiZnBfZGM1NDYwNjU3ZiIKfQo=
+  recorded_at: Mon, 01 Jun 2026 20:20:04 GMT
+recorded_with: VCR 6.4.0

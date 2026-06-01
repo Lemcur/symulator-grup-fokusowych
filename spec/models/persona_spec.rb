@@ -1,45 +1,45 @@
 require "rails_helper"
 
 RSpec.describe Persona, type: :model do
-  describe "walidacje" do
-    it "wymaga name" do
+  describe "validations" do
+    it "requires name" do
       persona = build(:persona, name: nil)
       expect(persona).not_to be_valid
       expect(persona.errors[:name]).to be_present
     end
 
-    it "wymaga description" do
+    it "requires description" do
       persona = build(:persona, description: nil)
       expect(persona).not_to be_valid
       expect(persona.errors[:description]).to be_present
     end
   end
 
-  describe "helpery opinii" do
+  describe "opinion helpers" do
     let(:persona) { create(:persona) }
 
-    it "round_zero_opinion zwraca opinię z round=0" do
+    it "returns the round=0 opinion via round_zero_opinion" do
       r0 = create(:opinion, persona: persona, focus_group: persona.focus_group, round: 0)
       create(:opinion, :round_one, persona: persona, focus_group: persona.focus_group)
 
       expect(persona.round_zero_opinion).to eq(r0)
     end
 
-    it "round_one_opinion zwraca opinię z round=1" do
+    it "returns the round=1 opinion via round_one_opinion" do
       create(:opinion, persona: persona, focus_group: persona.focus_group, round: 0)
       r1 = create(:opinion, :round_one, persona: persona, focus_group: persona.focus_group)
 
       expect(persona.round_one_opinion).to eq(r1)
     end
 
-    it "zwraca nil jeśli brak opinii w danej rundzie" do
+    it "returns nil when no opinion exists for the round" do
       expect(persona.round_zero_opinion).to be_nil
       expect(persona.round_one_opinion).to be_nil
     end
   end
 
-  describe "kaskadowe usuwanie" do
-    it "usuwa opinie przy destroy persony" do
+  describe "cascading delete" do
+    it "destroys opinions when persona is destroyed" do
       persona = create(:persona)
       create(:opinion, persona: persona, focus_group: persona.focus_group)
       create(:opinion, :round_one, persona: persona, focus_group: persona.focus_group)

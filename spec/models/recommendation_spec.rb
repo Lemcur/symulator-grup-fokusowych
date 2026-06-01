@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Recommendation, type: :model do
-  describe "walidacje" do
-    it "blokuje dwie rekomendacje dla jednej sesji" do
+  describe "validations" do
+    it "rejects two recommendations for the same focus_group" do
       fg = create(:focus_group)
       create(:recommendation, focus_group: fg)
       dup = build(:recommendation, focus_group: fg)
@@ -13,7 +13,7 @@ RSpec.describe Recommendation, type: :model do
   end
 
   describe "jsonb fields" do
-    it "przechowuje strukturalne pola z paperu Halla" do
+    it "stores Hall-specific structural fields" do
       rec = create(:recommendation,
         agreement_points: ["wszyscy doceniają jakość"],
         persuasive_arguments: ["argument o cenie przekonał 5 osób"],
@@ -25,7 +25,7 @@ RSpec.describe Recommendation, type: :model do
       expect(rec.persistent_divisions.first).to include("młodzi vs starsi")
     end
 
-    it "rating_distribution jako hash 1-5" do
+    it "stores rating_distribution as a hash keyed by rating value" do
       rec = create(:recommendation, rating_distribution: { "1" => 0, "5" => 10 })
       expect(rec.rating_distribution["5"]).to eq(10)
     end
