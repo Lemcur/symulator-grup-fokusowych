@@ -83,4 +83,7 @@ RSpec.configure do |config|
   # Custom sign_in! helper (zob. spec/support/auth_helpers.rb)
   config.include AuthHelpers, type: :request
   config.include AuthHelpers, type: :system
+
+  config.after(:each, type: :request) { Warden.test_reset! }
+  config.after(:each, type: :system)  { Warden.test_reset! }
 end

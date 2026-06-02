@@ -1,0 +1,23 @@
+<% content_for :title, "Produkty" %>
+
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold">Produkty</h1>
+  <%= link_to "Nowy produkt", new_product_path,
+        class: "px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700" %>
+</div>
+
+<% if @products.empty? %>
+  <p class="text-gray-600">Nie masz jeszcze żadnych produktów. <%= link_to "Dodaj pierwszy", new_product_path, class: "text-indigo-700 underline" %>.</p>
+<% else %>
+  <div class="bg-white rounded shadow border border-gray-200">
+    <% @products.each do |product| %>
+      <div class="px-4 py-3 border-b last:border-b-0 border-gray-100 flex items-center justify-between">
+        <div>
+          <%= link_to product.name, product, class: "font-semibold text-indigo-700 hover:underline" %>
+          <p class="text-sm text-gray-600 line-clamp-1"><%= product.description %></p>
+        </div>
+        <div class="text-xs text-gray-500"><%= product.focus_groups.count %> sesji</div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

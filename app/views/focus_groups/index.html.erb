@@ -1,0 +1,27 @@
+<% content_for :title, "Sesje fokusowe" %>
+
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold">Sesje fokusowe</h1>
+  <%= link_to "Nowa sesja", new_focus_group_path,
+        class: "px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700" %>
+</div>
+
+<% if @focus_groups.empty? %>
+  <p class="text-gray-600">
+    Nie masz jeszcze żadnych sesji. <%= link_to "Utwórz pierwszą", new_focus_group_path, class: "text-indigo-700 underline" %>.
+  </p>
+<% else %>
+  <div class="bg-white rounded shadow border border-gray-200 divide-y divide-gray-100">
+    <% @focus_groups.each do |fg| %>
+      <div class="px-4 py-3 flex items-center justify-between">
+        <div>
+          <%= link_to fg.name, fg, class: "font-semibold text-indigo-700 hover:underline" %>
+          <p class="text-sm text-gray-600"><%= fg.product.name %> · N=<%= fg.sample_size %> · <%= fg.created_at.strftime("%Y-%m-%d %H:%M") %></p>
+        </div>
+        <span class="px-2 py-1 text-xs uppercase tracking-wide bg-gray-100 text-gray-700 rounded">
+          <%= fg.status.humanize %>
+        </span>
+      </div>
+    <% end %>
+  </div>
+<% end %>

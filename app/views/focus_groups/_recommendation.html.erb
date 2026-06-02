@@ -1,0 +1,50 @@
+<div class="bg-white p-6 rounded shadow border border-gray-200 space-y-6">
+  <h2 class="text-xl font-bold border-b border-gray-200 pb-2">Rekomendacja</h2>
+
+  <% if recommendation.summary.present? %>
+    <section>
+      <h3 class="font-semibold text-gray-700 mb-1">Podsumowanie</h3>
+      <p class="whitespace-pre-wrap"><%= recommendation.summary %></p>
+    </section>
+  <% end %>
+
+  <% [
+    ["Mocne strony",            recommendation.strengths,            "text-green-800"],
+    ["Słabe strony",            recommendation.weaknesses,           "text-red-800"],
+    ["Punkty zgody",            recommendation.agreement_points,     "text-indigo-800"],
+    ["Argumenty przekonujące",  recommendation.persuasive_arguments, "text-amber-800"],
+    ["Trwałe podziały",         recommendation.persistent_divisions, "text-purple-800"],
+    ["Wnioski segmentowe",      recommendation.segment_insights,     "text-gray-800"]
+  ].each do |label, items, color| %>
+    <% next if Array(items).empty? %>
+    <section>
+      <h3 class="font-semibold <%= color %> mb-2"><%= label %></h3>
+      <ul class="list-disc list-inside space-y-1 text-sm">
+        <% Array(items).each do |item| %>
+          <li><%= item %></li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+
+  <% if recommendation.rating_distribution.present? %>
+    <section>
+      <h3 class="font-semibold text-gray-700 mb-2">Rozkład ocen (round 1)</h3>
+      <div class="space-y-1">
+        <% recommendation.rating_distribution.sort.each do |rating, count| %>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="w-8 text-right"><%= rating %>/5</span>
+            <div class="flex-1 bg-gray-100 rounded h-4">
+              <div class="bg-indigo-500 h-4 rounded" style="width: <%= (count.to_f / recommendation.rating_distribution.values.sum * 100).round %>%"></div>
+            </div>
+            <span class="w-8 text-gray-600"><%= count %></span>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <p class="text-xs text-gray-500 border-t border-gray-100 pt-2">
+    Wygenerowano: <%= recommendation.generated_at&.strftime("%Y-%m-%d %H:%M") %>
+  </p>
+</div>
