@@ -6,7 +6,7 @@ skinparam sequenceMessageAlign center
 
 actor User
 participant "CollectOpinionJob" as Col <<asynchronous>>
-participant "OpinionCollectorService" as Svc
+participant "OpinionCollectors::\nLlmBasic" as Svc
 participant "DeliberateJob" as Del <<asynchronous>>
 database "DB" as DB
 participant "LLM API" as LLM <<external>>
@@ -22,40 +22,54 @@ note over User, LLM
   diagramie deliberate-and-synthesize.puml.
 end note
 
-== 1. Zbieranie opinii prywatnych (równolegle, w tle) ==
+== 1. Zbieranie opinii prywatnych (równolegle, fan-out) ==
 
 note over Col
-  N asynchronicznych zadań wykonywanych jest niezależnie i równolegle.
-  Poniżej przepływ pojedynczego zadania.
+  N asynchronicznych zadań wykonywanych jest niezależnie i równolegle
+  (Sidekiq). Poniżej przepływ pojedynczego zadania dla Persony X.
 end note
 
 activate Col
-Col -> DB : load Persona + Product
-DB --> Col : persona, product
+Col -> DB : Persona.find(persona_id)\n[wczytuje persone + focus_group + product]
+DB --> Col : persona
 
-Col -> Svc : call(persona, product)
+Col -> Col : guard: return\nunless focus_group.collecting_opinions?
+
+Col -> Svc : new(model: persona.llm_model).call(persona)
 activate Svc
 
-Svc -> LLM : prompt: profil persony + opis produktu\n-> ocena, plusy, minusy, cytat
-LLM --> Svc : opinia (JSON)
+Svc -> LLM : LlmClient#ask(prompt, schema: OpinionSchema)\n[prompt = profil persony + opis produktu\n→ "wcielasz się i odpowiadasz JAKO ta osoba"]
+LLM --> Svc : JSON: {rating, pros, cons, quote}
 
-Svc --> Col : opinion_data
+Svc -> DB : Opinion.create!(persona, focus_group,\nround: 0, status: collected,\nrating, pros, cons, quote,\nraw_response)
+DB --> Svc : opinion(round=0)
+
+Svc --> Col : opinion
 deactivate Svc
 
-Col -> DB : save Opinion(persona, round=0,\nrating, pros, cons, quote)
-DB --> Col : opinion(round=0)
+== 2. Barrier sync (atomic SQL UPDATE - race-free) ==
 
-Col ->> User : aktualizacja postępu:\n"k / N opinii prywatnych zebranych"
+Col -> DB : UPDATE focus_groups\nSET status = deliberating\nWHERE id = ?\nAND status = collecting_opinions\nAND (SELECT COUNT(*) FROM opinions\n     WHERE focus_group_id = focus_groups.id\n     AND round = 0) >= sample_size
+DB --> Col : rows_affected (0 lub 1)
 
-Col -> DB : all_opinions_finished? (round=0)
-DB --> Col : tak / nie
+note right of Col
+  Atomic SQL UPDATE zamiast read-then-check.
+  Dzięki warunkowi WHERE tylko JEDEN z N
+  równoległych jobów dostanie rows=1 -
+  pozostałe rows=0 i return bez akcji.
+  Eliminuje race condition gdyby wiele jobów
+  zakończyło się jednocześnie.
+end note
 
-opt to ostatnia opinia z próby (barrier sync)
-  Col -> DB : update FocusGroup.status = deliberating
-  Col -> DB : update FocusGroup.deliberation_started_at = now
+alt rows == 1 (ten job zakończył ostatnią opinię)
   Col ->> User : aktualizacja statusu:\n"deliberacja: persony czytają cudze opinie..."
-  Col -> Del : enqueue N x DeliberateJob\n(jedna na każdą Personę, fan-out)
+  loop dla każdej persona w focus_group.personas
+    Col -> Del : DeliberateJob.perform_later(persona.id)
+  end
+else rows == 0 (jeszcze brakuje opinii lub status zmieniony)
+  Col -> Col : return (nic nie robimy)
 end
+
 deactivate Col
 
 note over User

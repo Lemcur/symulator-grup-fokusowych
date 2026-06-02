@@ -1,5 +1,5 @@
 @startuml ClassDiagram_SingleRound_DeliberateSynthesize
-title Class Diagram - Single-Round + Deliberate→Synthesize (council governance, N≈20, R=1 deliberacji)
+title Class Diagram - Single-Round + Deliberate→Synthesize (council governance, N=12, R=1 deliberacji)
 
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
@@ -18,6 +18,11 @@ enum FocusGroupStatus {
 enum GenerationMode {
   proportions
   slots
+}
+
+enum PersonaGeneratorEnum {
+  llm_single_pass
+  llm_two_pass
 }
 
 enum OpinionStatus {
@@ -44,6 +49,10 @@ class FocusGroup {
   +sample_size : integer
   +generation_mode : GenerationMode
   +target_demographics : jsonb
+  +inclusion_criteria : jsonb
+  +exclusion_criteria : jsonb
+  +brief_summary : text
+  +persona_generator : PersonaGeneratorEnum
   +status : FocusGroupStatus
   +started_at : datetime
   +deliberation_started_at : datetime
@@ -62,6 +71,11 @@ class Persona {
   +description : text
   +demographics : jsonb
   +traits : jsonb
+  +llm_model : string
+  +llm_provider : string
+  --
+  +round_zero_opinion() : Opinion
+  +round_one_opinion() : Opinion
 }
 
 class Opinion {
@@ -84,6 +98,7 @@ class Chairman {
 }
 
 class Recommendation {
+  +summary : text
   +strengths : jsonb
   +weaknesses : jsonb
   +rating_distribution : jsonb
@@ -94,36 +109,68 @@ class Recommendation {
   +generated_at : datetime
 }
 
-class PersonaGeneratorService <<service>> {
-  +call(slot_demographics) : Persona
+package "PersonaGenerators" <<Rectangle>> {
+  abstract class "Base" as PgBase <<service>> {
+    +call(focus_group, slot_demographics, previous_context) : Persona
+    #create_persona(focus_group, slot_demographics, data, llm_model, llm_provider) : Persona
+  }
+  class LlmTwoPassRefine <<service>> {
+    +call(focus_group, slot_demographics, previous_context) : Persona
+  }
+  LlmTwoPassRefine --|> PgBase
 }
 
-class OpinionCollectorService <<service>> {
-  +call(persona, product) : Opinion
+package "OpinionCollectors" <<Rectangle>> {
+  abstract class "Base" as OcBase <<service>> {
+    +call(persona) : Opinion
+    #create_opinion(persona, data, llm_model, llm_provider) : Opinion
+  }
+  class LlmBasic <<service>> {
+    +call(persona) : Opinion
+  }
+  LlmBasic --|> OcBase
 }
 
-class DeliberationService <<service>> {
-  +call(persona, own_opinion, peer_opinions) : Opinion
+package "DeliberationServices" <<Rectangle>> {
+  abstract class "Base" as DsBase <<service>> {
+    +call(persona, peer_opinions) : Opinion
+    #create_revised_opinion(persona, data, llm_model, llm_provider) : Opinion
+  }
+  class LlmRevise <<service>> {
+    +call(persona, peer_opinions) : Opinion
+  }
+  LlmRevise --|> DsBase
 }
 
-class ChairmanSynthesisService <<service>> {
-  +call(focus_group, chairman) : Recommendation
+package "ChairmanServices" <<Rectangle>> {
+  abstract class "Base" as CsBase <<service>> {
+    +call(focus_group) : Recommendation
+    #create_recommendation(focus_group, data, llm_model, llm_provider) : Recommendation
+  }
+  class LlmSynthesize <<service>> {
+    +call(focus_group) : Recommendation
+  }
+  LlmSynthesize --|> CsBase
 }
 
 class LlmClient <<service>> {
-  +complete(prompt, schema) : jsonb
+  +model : string
+  +provider : symbol
+  --
+  +ask(prompt, schema) : Hash
 }
 
-class RunAgentJob <<asynchronous job>> {
-  +perform(focus_group_id, slot_demographics) : void
+class GeneratePersonasJob <<asynchronous job>> {
+  +perform(focus_group_id) : void
 }
 
 class CollectOpinionJob <<asynchronous job>> {
-  +perform(opinion_id) : void
+  +perform(persona_id) : void
 }
 
 class DeliberateJob <<asynchronous job>> {
-  +perform(focus_group_id, persona_id) : void
+  +perform(persona_id) : void
+  +peer_opinions_for(persona) : Array<Opinion>
 }
 
 class ChairmanSynthesisJob <<asynchronous job>> {
@@ -136,21 +183,22 @@ Product "1" -- "0..*" FocusGroup : evaluated by >
 
 FocusGroup "1" *-- "0..*" Persona
 FocusGroup "1" *-- "0..*" Opinion
-FocusGroup "1" *-- "1" Chairman
+FocusGroup "1" *-- "0..1" Chairman
 FocusGroup "1" *-- "0..1" Recommendation
-Persona "1" -- "1..2" Opinion : authors >
+Persona "1" -- "0..2" Opinion : authors >
 
-RunAgentJob ..> PersonaGeneratorService
-RunAgentJob ..> OpinionCollectorService
-DeliberateJob ..> DeliberationService
-ChairmanSynthesisJob ..> ChairmanSynthesisService
+GeneratePersonasJob ..> PgBase : sekwencyjna pętla\n(strategy via persona_generator enum)
+GeneratePersonasJob ..> CollectOpinionJob : fan-out N po\ngenerating_personas
+CollectOpinionJob ..> OcBase
+CollectOpinionJob ..> DeliberateJob : fan-out N po\nbarrier sync
+DeliberateJob ..> DsBase
+DeliberateJob ..> ChairmanSynthesisJob : enqueue po\nbarrier sync
+ChairmanSynthesisJob ..> CsBase
 
-PersonaGeneratorService ..> LlmClient
-OpinionCollectorService ..> LlmClient
-DeliberationService ..> LlmClient
-ChairmanSynthesisService ..> LlmClient
-
-CollectOpinionJob ..> OpinionCollectorService
+PgBase ..> LlmClient
+OcBase ..> LlmClient
+DsBase ..> LlmClient
+CsBase ..> LlmClient
 
 note right of FocusGroup
   Persony tworzone są od nowa dla każdej sesji.
@@ -159,75 +207,135 @@ note right of FocusGroup
 
   (proportions) - default, prosty UI:
   {
-    "gender": {"kobieta": 0.6, "mezczyzna": 0.4},
-    "age":    {"25-34": 0.3, "35-44": 0.4, "45+": 0.3},
-    "income": {"sredni": 0.6, "wysoki": 0.4}
+    "plec": {"kobieta": 0.6, "mezczyzna": 0.4},
+    "wiek": {"25-34": 0.3, "35-44": 0.4, "45+": 0.3}
   }
   Wymiary niezalezne - bez kontroli korelacji.
 
   (slots) - tryb advanced, jawne sloty:
   [
-    {"count": 5, "gender": "kobieta", "age": "25-34", "income": "sredni"},
-    {"count": 7, "gender": "kobieta", "age": "35-44", "income": "wysoki"},
+    {"count": 5, "plec": "kobieta", "wiek": "25-34"},
+    {"count": 7, "plec": "kobieta", "wiek": "35-44"},
     ...
   ]
-  Pelna kontrola korelacji krzyzowych.
 
   Metoda expand_slots() materializuje N
-  slot_demographics dla N x RunAgentJob -
-  w trybie proportions losuje z rozkladow,
-  w trybie slots rozwija liste z polem count.
+  slot_demographics dla pętli generowania
+  person - w trybie proportions losuje
+  z rozkładów ważonych, w trybie slots
+  rozwija listę z polem count.
 
-  Dla wariantu z deliberacja zalecane
-  sample_size = 12 (lost-in-the-middle,
-  wyplaszczanie krzywej informacyjnej -
-  patrz notatki-do-pracy.md).
+  Dla wariantu z deliberacją sample_size = 12
+  (cost vs. variance trade-off, patrz
+  notatki-do-pracy.md).
+
+  Pola inclusion_criteria, exclusion_criteria,
+  brief_summary są w schemacie ale nie są
+  jeszcze podpinane do promptów (MVP).
+
+  persona_generator (enum) wybiera strategię
+  generacji - obecnie obie wartości mapują
+  na LlmTwoPassRefine.
+end note
+
+note right of Persona
+  llm_model + llm_provider są zapisywane na
+  persone aby kolejne joby (CollectOpinionJob,
+  DeliberateJob) używały TEGO SAMEGO modelu
+  co generacja - dla utrzymania spójności
+  głosu (voice consistency).
+
+  GeneratePersonasJob rotuje modele po slotach
+  (round-robin), więc grupa ma mix np.
+  GPT-4o-mini i Claude Haiku.
 end note
 
 note right of Opinion
-  Każda Persona ma dwie opinie:
+  Każda Persona ma do dwóch opinii:
   (round=0) prywatna, wydana niezależnie
   (round=1) po przeczytaniu cudzych opinii;
-  może być identyczna z round=0 (revised=false)
-  lub zrewidowana (revised=true).
+  LLM zwraca pełne pola zawsze, więc nawet
+  bez rewizji (revised=false) zapisywany jest
+  nowy rekord round=1.
   Chairman w syntezie dostaje OBA zestawy,
   by móc opisać zmianę zdania i argumenty,
   które przekonały innych (group dynamics).
+
+  Unique index (persona_id, round) gwarantuje
+  max 1 opinia per runda.
 end note
 
 note bottom of Chairman
   Pojedynczy LLM pełniący rolę moderatora-analityka
-  (chairman_model wg Halla). Po zakończeniu wszystkich
-  DeliberateJob otrzymuje pełen materiał (Opinion
-  round=0 + round=1 + persony) i pisze rekomendację:
-  mocne/słabe strony, rozkład ocen, segmenty,
-  punkty zgody i trwałe podziały.
+  (chairman_model wg Halla). Tworzony LAZY w
+  ChairmanSynthesisJob (find_or_create_by!) -
+  istnieje dopiero w fazie synthesizing.
+  Model: claude-sonnet-4-6 (constant w jobie).
 
-  Atrybut llm_model (np. "claude-opus-4-7",
-  "meta-llama/llama-3.1-8b-instruct") - nazwa
-  modelu w OpenRouter. W diagramie domenowym
-  byłoby "model", ale w Rails koliduje z konwencjami
-  ActiveModel - dlatego llm_model.
+  Atrybut llm_model (np. "claude-sonnet-4-6",
+  "gpt-4o") - kanoniczna nazwa modelu w
+  multi-provider mapping LlmClient.
+end note
+
+note bottom of GeneratePersonasJob
+  SEKWENCYJNA pętla zamiast fan-out (decyzja
+  empiryczna - fan-out powodował diversity
+  collapse, np. 4× "Karolina Wróbel").
+  Każda kolejna persona dostaje previous_context
+  z listą wcześniejszych - LLM ma wiedzę
+  o całej grupie i unika powtórzeń.
+
+  Po ukończeniu wszystkich N person:
+  - update status → collecting_opinions
+  - enqueue N × CollectOpinionJob (fan-out)
+end note
+
+note bottom of CollectOpinionJob
+  Fan-out N (jedna na każdą Personę). Każdy job:
+  (1) ładuje Personę + jej focus_group + product
+  (2) OpinionCollectors::LlmBasic.call(persona)
+      → Opinion(round=0)
+  (3) barrier sync via atomic SQL UPDATE WHERE
+      (count opinions WHERE round=0) >= sample_size
+      AND status = collecting_opinions
+      → jeśli rows=1, ten job był ostatni:
+        update status → deliberating
+        enqueue N × DeliberateJob
 end note
 
 note bottom of DeliberateJob
-  Fan-out N (po jednym joby na każdą Personę),
-  uruchamiany po barrier sync wszystkich
+  Fan-out N po zakończeniu wszystkich
   CollectOpinionJob. Każdy job:
-  (1) ładuje własną Opinion(round=0)
-  (2) ładuje pozostałe N-1 Opinion(round=0)
-  (3) prompt do LLM z wykluczeniem własnej opinii
-      z sekcji "co powiedzieli inni" (anti-anchoring)
-  (4) zapisuje Opinion(round=1) z revised + rationale
+  (1) peer_opinions_for(persona) ładuje N-1
+      Opinion(round=0) Z WYKLUCZENIEM własnej
+      (anti-anchoring)
+  (2) DeliberationServices::LlmRevise.call(...)
+      otrzymuje prompt z własną round=0 +
+      peer opinions z etykietami demograficznymi
+  (3) zapisuje Opinion(round=1) z revised +
+      revision_rationale (LLM zwraca zawsze
+      pełne pola)
+  (4) barrier sync atomic SQL UPDATE → jeśli
+      ostatni: status → synthesizing,
+      enqueue ChairmanSynthesisJob (singleton)
 end note
 
 note bottom of ChairmanSynthesisJob
-  Uruchamiany po barrier sync wszystkich DeliberateJob.
-  Wywołuje ChairmanSynthesisService, który syntezuje
-  rekomendację zgodnie ze schematem Halla:
+  Singleton job (1 na FocusGroup). Wywołuje
+  ChairmanServices::LlmSynthesize, który
+  syntezuje rekomendację zgodnie ze schematem
+  Halla:
   - points of agreement after deliberation
-  - strong arguments that convinced others to change
-  - areas where the council remains divided
+  - persuasive arguments that convinced others
+  - persistent divisions
+  - segment_insights, strengths, weaknesses
+  - summary
+
+  rating_distribution jest LICZONE po stronie
+  kodu (Recommendation::create_recommendation:
+  focus_group.opinions.round_one.group(:rating).count)
+  zamiast prosić LLM - eliminacja błędów
+  arytmetyki w outputach modelu.
 end note
 
 @enduml

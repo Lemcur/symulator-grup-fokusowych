@@ -6,9 +6,9 @@ skinparam sequenceMessageAlign center
 
 actor User
 participant "DeliberateJob" as Del <<asynchronous>>
-participant "DeliberationService" as DelSvc
+participant "DeliberationServices::\nLlmRevise" as DelSvc
 participant "ChairmanSynthesisJob" as Syn <<asynchronous>>
-participant "ChairmanSynthesisService" as SynSvc
+participant "ChairmanServices::\nLlmSynthesize" as SynSvc
 database "DB" as DB
 participant "LLM API" as LLM <<external>>
 
@@ -27,68 +27,89 @@ note over Del
 end note
 
 activate Del
-Del -> DB : load Opinion(persona=X, round=0)
-DB --> Del : own_opinion
+Del -> DB : Persona.find(persona_id)\n[wczytuje X + focus_group]
+DB --> Del : persona X
 
-Del -> DB : load Opinion(persona!=X, round=0)\n[anti-anchoring: bez własnej]
+Del -> Del : guard: return\nunless focus_group.deliberating?
+
+Del -> DB : peer_opinions_for(X):\nfocus_group.opinions.where(round: 0)\n.where.not(persona_id: X.id)\n.includes(:persona)\n[anti-anchoring: bez własnej round=0]
 DB --> Del : peer_opinions (N-1)
 
-Del -> DB : load Persona(X) + Persony(others)\n[profile do etykietowania opinii]
-DB --> Del : personas
-
-Del -> DelSvc : call(persona, own_opinion, peer_opinions)
+Del -> DelSvc : new(model: persona.llm_model).call(\npersona: X,\npeer_opinions: [...])
 activate DelSvc
 
-DelSvc -> LLM : prompt:\n- profil persony X\n- "Twoja opinia: ..."\n- "Inni powiedzieli: [N-1 opinii\n  z etykietami demograficznymi]"\n- "Czy chcesz zrewidować?"
+DelSvc -> DB : persona.round_zero_opinion\n[własna opinia round=0]
+DB --> DelSvc : own_opinion
+
+DelSvc -> LLM : LlmClient#ask(prompt,\nschema: DeliberationSchema):\n- profil persony X\n- "Twoja poprzednia opinia: ..."\n- "Opinie innych: [N-1 z etykietami\n  imie + miasto + zawod + ocena]"\n- "Zmieniasz TYLKO jeśli czyjś argument\n  naprawdę Cię przekonał"
 LLM --> DelSvc : JSON: {rating, pros, cons, quote,\nrevised: bool, revision_rationale}
 
-DelSvc --> Del : revised_opinion
+DelSvc -> DB : Opinion.create!(persona X, focus_group,\nround: 1, status: collected,\nrating, pros, cons, quote,\nrevised, revision_rationale,\nraw_response)
+DB --> DelSvc : opinion(round=1)
+
+DelSvc --> Del : opinion(round=1)
 deactivate DelSvc
 
-alt revised = true
-  Del -> DB : save Opinion(persona=X, round=1,\nrevised=true, rationale, nowy rating/pros/cons)
-else revised = false
-  Del -> DB : save Opinion(persona=X, round=1,\nrevised=false, rationale,\nkopia round=0)
-end
-DB --> Del : opinion(round=1)
+note right of DelSvc
+  LLM ZAWSZE zwraca pełne pola (rating/pros/
+  cons/quote) niezależnie od revised. Kod
+  nie kopiuje round=0 - zapisuje to co LLM
+  zwrócił. Jeśli revised=false zazwyczaj
+  wartości są zbliżone do round=0 ale nie
+  są gwarantowanie identyczne.
+end note
 
-Del ->> User : aktualizacja postępu:\n"k / N person zakończyło deliberację"
+== 2. Barrier sync (atomic SQL UPDATE) ==
 
-Del -> DB : all_deliberations_finished?
-DB --> Del : tak / nie
+Del -> DB : UPDATE focus_groups\nSET status = synthesizing\nWHERE id = ?\nAND status = deliberating\nAND (SELECT COUNT(*) FROM opinions\n     WHERE focus_group_id = focus_groups.id\n     AND round = 1) >= sample_size
+DB --> Del : rows_affected (0 lub 1)
 
-opt to ostatnia deliberacja z próby
-  Del -> DB : update FocusGroup.status = synthesizing
+alt rows == 1 (ostatni DeliberateJob)
   Del ->> User : aktualizacja statusu:\n"chairman pisze rekomendację..."
-  Del -> Syn : enqueue(focus_group.id)
+  Del -> Syn : ChairmanSynthesisJob.perform_later(focus_group.id)
+else rows == 0
+  Del -> Del : return
 end
 deactivate Del
 
-== 2. Synteza rekomendacji (chairman, asynchronicznie) ==
+== 3. Synteza rekomendacji (chairman, singleton job) ==
 
 activate Syn
-Syn -> DB : load FocusGroup + Chairman
-DB --> Syn : focus_group, chairman
+Syn -> DB : FocusGroup.find(focus_group_id)
+DB --> Syn : focus_group
 
-Syn -> DB : load Opinion(round=0) + Opinion(round=1)\nwszystkich person
-DB --> Syn : opinions (2N rekordów)
+Syn -> Syn : guard: return\nunless focus_group.synthesizing?
 
-Syn -> DB : load Persony (do segmentacji)
-DB --> Syn : personas
+Syn -> DB : update FocusGroup.synthesis_started_at = now
 
-Syn -> SynSvc : call(focus_group, chairman)
+Syn -> DB : Chairman.find_or_create_by!(\nfocus_group: focus_group) do |c|\n  c.llm_model = "claude-sonnet-4-6"\n  c.role = "synthesizer"\nend
+DB --> Syn : chairman
+
+note right of Syn
+  Chairman tworzony LAZY - dopiero tutaj,
+  nie przy starcie sesji. Model zaszyty
+  jako constant (CHAIRMAN_MODEL) w jobie.
+end note
+
+Syn -> SynSvc : new(model: "claude-sonnet-4-6").call(\nfocus_group: focus_group)
 activate SynSvc
 
-SynSvc -> LLM : prompt (model = chairman.model):\n- rola: "moderator-analityk badań jakościowych"\n- materiał: 2N opinii (round 0 i round 1) + persony\n- zadanie: zsyntetyzuj, zwracając uwagę na:\n  * points of agreement after deliberation\n  * strong arguments that convinced others\n  * areas where council remains divided\n  * 3 mocne strony, 3 słabe, rozkład ocen, segmenty
+SynSvc -> DB : focus_group.personas.order(:created_at)\n+ opinions.round_one.includes(:persona)\n+ opinions.round_one.where(revised: true)
+DB --> SynSvc : personas, round_one_opinions, revisions
+
+SynSvc -> LLM : LlmClient#ask(prompt,\nschema: RecommendationSchema):\n- rola: "moderator polskiej grupy fokusowej"\n- materiał: uczestnicy + opinie round=1 +\n  rewizje z delta round0→round1\n- zadanie: summary, strengths, weaknesses,\n  agreement_points, persuasive_arguments,\n  persistent_divisions, segment_insights
 LLM --> SynSvc : Recommendation JSON
+
+SynSvc -> DB : rating_distribution = opinions.round_one\n.group(:rating).count.transform_keys(&:to_s)\n[obliczone po stronie kodu, nie z LLM]
+DB --> SynSvc : rating_distribution
+
+SynSvc -> DB : Recommendation.create!(focus_group,\nsummary, strengths, weaknesses,\nrating_distribution, agreement_points,\npersuasive_arguments, persistent_divisions,\nsegment_insights, generated_at)
+DB --> SynSvc : recommendation
 
 SynSvc --> Syn : recommendation
 deactivate SynSvc
 
-Syn -> DB : save Recommendation(\nstrengths, weaknesses, rating_distribution,\nsegment_insights, agreement_points,\npersuasive_arguments, persistent_divisions)
-DB --> Syn : recommendation
-
-Syn -> DB : update FocusGroup.status = completed
+Syn -> DB : update FocusGroup.status = completed\n+ completed_at = now
 DB --> Syn : ok
 
 Syn ->> User : finalna aktualizacja:\n"rekomendacja gotowa"
@@ -96,12 +117,14 @@ deactivate Syn
 
 note over User
   User otwiera widok rekomendacji:
-  3 mocne strony, 3 słabe strony,
-  rozkład ocen, podział na segmenty,
-  oraz sekcje wynikające z deliberacji:
-  - na czym zgodzili się respondenci
-  - które argumenty zmieniły zdanie innych
-  - gdzie pozostają trwałe podziały
+  - summary (3-4 zdania dla decydenta)
+  - strengths, weaknesses (po stronie kodu)
+  - rating_distribution (rzeczywisty z DB)
+  - segment_insights (per demografia)
+  - agreement_points (zgoda po deliberacji)
+  - persuasive_arguments (argumenty które
+    zmieniły zdanie innych)
+  - persistent_divisions (trwałe podziały)
 end note
 
 @enduml

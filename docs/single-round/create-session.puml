@@ -1,5 +1,5 @@
 @startuml SequenceDiagram_SingleRound_CreateSession
-title Sequence Diagram - Single-Round: tworzenie sesji i generowanie kohorty person
+title Sequence Diagram - Single-Round: tworzenie sesji i generowanie kohorty person (sekwencyjna pętla)
 
 skinparam responseMessageBelowArrow true
 skinparam sequenceMessageAlign center
@@ -7,25 +7,27 @@ skinparam sequenceMessageAlign center
 actor User
 participant "FocusGroupsController" as Ctrl
 participant "GeneratePersonasJob" as Job <<asynchronous>>
-participant "PersonaGeneratorService" as Svc
+participant "PersonaGenerators::\nLlmTwoPassRefine" as Svc
+participant "CollectOpinionJob" as Col <<asynchronous>>
 database "DB" as DB
 participant "LLM API" as LLM <<external>>
 
 == 1. Tworzenie sesji (synchronicznie) ==
 
-User -> Ctrl : POST /focus_groups\n(product_id, sample_size,\ngeneration_mode, target_demographics)
+User -> Ctrl : POST /focus_groups\n(product_id, sample_size,\ngeneration_mode, target_demographics,\npersona_generator)
 
 note right of Ctrl
   generation_mode = "proportions" | "slots"
   target_demographics format zalezy od mode:
   - proportions: rozklady per wymiar
   - slots: lista jawnych slotow z polem count
-  Walidacja: sum(proporcji) ~ 1.0 per wymiar
-  lub sum(count) == sample_size dla slots.
+  Walidacja na modelu FocusGroup:
+  target_demographics_matches_mode
+  (sum(count) == sample_size dla slots).
 end note
 
 activate Ctrl
-Ctrl -> DB : save FocusGroup(status = pending,\ngeneration_mode, target_demographics)
+Ctrl -> DB : save FocusGroup(status = pending,\ngeneration_mode, target_demographics,\npersona_generator)
 DB --> Ctrl : focus_group
 Ctrl -> Job : enqueue(focus_group.id)
 Ctrl --> User : redirect na widok statusu sesji
@@ -37,43 +39,62 @@ note over User
   realizowanych w tle.
 end note
 
-== 2. Generowanie person (asynchronicznie, w tle) ==
+== 2. Generowanie person (asynchronicznie, sekwencyjna pętla) ==
 
 activate Job
-Job -> DB : update FocusGroup.status = generating_personas
+Job -> DB : update FocusGroup.status = generating_personas\n+ started_at = now
 Job ->> User : aktualizacja statusu: "generuję persony..."
 
 Job -> DB : focus_group.expand_slots()\n[materializuje N slot_demographics\nz target_demographics + generation_mode]
 DB --> Job : slots (N x slot_demographics)
 
-Job -> Svc : call(focus_group)
-activate Svc
+Job -> Job : generator_class = GENERATOR_BY_ENUM[\nfocus_group.persona_generator]\n(strategy pattern)
 
-loop dla każdego slotu (N x)
-  Svc -> LLM : prompt + schema profilu persony
-  LLM --> Svc : JSON z profilem persony
-  Svc -> DB : save Persona(focus_group, profil)
+loop dla każdego slotu (sekwencyjnie, i = 0..N-1)
+  Job -> Job : model = MODEL_SPLIT[i % 2]\n(round-robin: GPT-4o-mini /\nClaude Haiku 4.5)
+
+  Job -> DB : build_previous_context(focus_group)\n[ładuje persony już utworzone w tej sesji]
+  DB --> Job : previous_context\n(lista wcześniejszych person)
+
+  Job -> Svc : new(model: model).call(\nfocus_group, slot_demographics,\nprevious_context)
+  activate Svc
+
+  Svc -> LLM : prompt 1: generation\n(profil + few-shot + previous_context\n+ "zaprojektuj kogoś WYRAŹNIE INNEGO")
+  LLM --> Svc : JSON: draft persony
+
+  Svc -> LLM : prompt 2: refinement\n(self-refine pass per Madaan 2023)
+  LLM --> Svc : JSON: finalna persona
+
+  Svc -> DB : Persona.create!(focus_group,\nname, description, demographics =\nslot_demographics.merge(extras),\ntraits, llm_model, llm_provider)
   DB --> Svc : persona
-  Svc ->> User : aktualizacja postępu: "k / N gotowych"
+
+  Svc --> Job : persona
+  deactivate Svc
+
+  Job ->> User : aktualizacja postępu:\n"k+1 / N person gotowych"
 end
 
-Svc --> Job : ok
-deactivate Svc
+note over Job
+  Sekwencyjna pętla zamiast fan-out -
+  empirycznie konieczne dla różnorodności
+  (zob. notatki-do-pracy.md, sekcja
+  "Diversity collapse w fan-out").
+
+  Wall clock: ~40-60s dla N=12, dominowane
+  przez 2N wywołań LLM (generation + refinement).
+end note
 
 Job -> DB : update FocusGroup.status = collecting_opinions
-Job -> Job : enqueue N x CollectOpinionJob\n(jedna na każdą Personę, fan-out)
+Job -> Col : enqueue N x CollectOpinionJob\n(jeden na każdą Personę, FAN-OUT)
 Job ->> User : aktualizacja statusu: "zbieranie opinii..."
 deactivate Job
 
 note over User
-  Faza druga startuje automatycznie - User
-  nie wykonuje żadnej akcji, dalej obserwuje
-  widok statusu. Dalszy przebieg zależy od
-  wybranego wariantu governance:
-  - baseline (Majority Vote): patrz
-    collect-and-aggregate.puml
-  - council (Deliberate+Synthesize): patrz
-    collect-opinions.puml + deliberate-and-synthesize.puml
+  Faza druga (collect-opinions) startuje
+  automatycznie - User nie wykonuje akcji,
+  dalej obserwuje widok statusu.
+  Dalszy przebieg: collect-opinions.puml +
+  deliberate-and-synthesize.puml.
 end note
 
 @enduml
