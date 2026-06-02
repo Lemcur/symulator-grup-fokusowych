@@ -8,7 +8,11 @@ Rails.application.routes.draw do
   end
 
   resources :products
-  resources :focus_groups# , only: [:new, :create, :show, :index]
+  resources :focus_groups do
+    member do
+      get :status
+    end
+  end
 
   get "up" => "rails/health#show", as: :rails_health_check
 

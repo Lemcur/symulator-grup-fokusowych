@@ -1,11 +1,15 @@
 class FocusGroupsController < ApplicationController
-  before_action :set_focus_group, only: [:show]
+  before_action :set_focus_group, only: [:show, :status]
 
   def index
     @focus_groups = current_user.focus_groups.includes(:product).order(created_at: :desc)
   end
 
   def show
+  end
+
+  def status
+    render partial: "status", locals: { focus_group: @focus_group }
   end
 
   def new
