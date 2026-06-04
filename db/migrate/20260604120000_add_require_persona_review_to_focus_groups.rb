@@ -1,0 +1,5 @@
+class AddRequirePersonaReviewToFocusGroups < ActiveRecord::Migration[8.1]
+  def change
+    add_column :focus_groups, :require_persona_review, :boolean, default: false, null: false
+  end
+end

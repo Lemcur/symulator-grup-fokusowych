@@ -11,7 +11,9 @@ Rails.application.routes.draw do
   resources :focus_groups do
     member do
       get :status
+      post :approve
     end
+    resources :personas, only: [:new, :create, :edit, :update, :destroy]
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

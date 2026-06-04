@@ -33,22 +33,11 @@
               class: "w-full px-3 py-2 border border-gray-300 rounded" %>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <%= f.label :sample_size, "Wielkość próby (N)", class: "block font-semibold mb-1" %>
-          <%= f.number_field :sample_size, min: 1, max: 50,
-                class: "w-full px-3 py-2 border border-gray-300 rounded" %>
-          <p class="text-xs text-gray-500 mt-1">Zalecane: 12 (cost vs. variance).</p>
-        </div>
-
-        <div>
-          <%= f.label :generation_mode, "Tryb generacji", class: "block font-semibold mb-1" %>
-          <%= f.select :generation_mode,
-                FocusGroup.generation_modes.keys.map { |k| [k.humanize, k] },
-                {},
-                class: "w-full px-3 py-2 border border-gray-300 rounded" %>
-          <p class="text-xs text-gray-500 mt-1">proportions: rozkłady; slots: jawne sloty.</p>
-        </div>
+      <div>
+        <%= f.label :sample_size, "Wielkość próby (N)", class: "block font-semibold mb-1" %>
+        <%= f.number_field :sample_size, min: 1, max: 50,
+              class: "w-full px-3 py-2 border border-gray-300 rounded" %>
+        <p class="text-xs text-gray-500 mt-1">Zalecane: 12 (cost vs. variance).</p>
       </div>
 
       <div>
@@ -57,6 +46,16 @@
               FocusGroup.persona_generators.keys.map { |k| [k.humanize, k] },
               {},
               class: "w-full px-3 py-2 border border-gray-300 rounded" %>
+      </div>
+
+      <div class="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded p-3">
+        <%= f.check_box :require_persona_review, class: "mt-1" %>
+        <div>
+          <%= f.label :require_persona_review, "Przejrzyj persony przed dyskusją", class: "font-semibold" %>
+          <p class="text-xs text-gray-600">
+            Po wygenerowaniu sesja zatrzyma się — będziesz mógł usunąć, edytować lub dodać persony przed zbieraniem opinii.
+          </p>
+        </div>
       </div>
 
       <div>

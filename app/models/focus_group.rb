@@ -14,7 +14,8 @@ class FocusGroup < ApplicationRecord
     deliberating: 3,
     synthesizing: 4,
     completed: 5,
-    failed: 6
+    failed: 6,
+    awaiting_review: 7
   }
 
   enum :generation_mode, {
@@ -44,6 +45,8 @@ class FocusGroup < ApplicationRecord
     case status
     when "pending", "generating_personas"
       personas.count.to_f / sample_size
+    when "awaiting_review"
+      1.0
     when "collecting_opinions"
       opinions.where(round: 0).count.to_f / sample_size
     when "deliberating"

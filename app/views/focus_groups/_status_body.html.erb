@@ -1,15 +1,48 @@
-<% in_progress = !(focus_group.completed? || focus_group.failed?) %>
+<% awaiting   = focus_group.awaiting_review? %>
+<% terminal  = focus_group.completed? || focus_group.failed? %>
+<% polling   = !(terminal || awaiting) %>
+<% in_progress_bar = !(terminal || awaiting) %>
+
+<% unless polling %>
+  <span data-poll-done="true" hidden></span>
+<% end %>
 
 <div class="flex items-center justify-between mb-6">
   <span class="px-3 py-1 text-xs uppercase tracking-wide bg-indigo-100 text-indigo-800 rounded">
     <%= focus_group.status.humanize %>
   </span>
   <span class="text-xs text-gray-500">
-    <%= in_progress ? "Aktualizacja co 3s" : "Zakończono #{focus_group.completed_at&.strftime('%H:%M')}" %>
+    <% if terminal %>
+      Zakończono <%= focus_group.completed_at&.strftime('%H:%M') %>
+    <% elsif awaiting %>
+      Oczekuje na zatwierdzenie person
+    <% else %>
+      Aktualizacja co 3s
+    <% end %>
   </span>
 </div>
 
-<% if in_progress %>
+<% if awaiting %>
+  <div class="mb-6 bg-amber-50 border border-amber-300 rounded p-4 flex items-center justify-between gap-4">
+    <div class="text-sm text-amber-900">
+      <p class="font-semibold mb-1">Persony gotowe do przeglądu</p>
+      <p>Przejrzyj listę poniżej. Możesz usunąć, edytować lub dodać persony. Gdy lista będzie OK, kliknij „Zatwierdź".</p>
+    </div>
+    <div class="flex gap-2 shrink-0">
+      <%= link_to "Dodaj personę",
+            new_focus_group_persona_path(focus_group),
+            class: "px-3 py-2 bg-white border border-amber-400 text-amber-900 rounded hover:bg-amber-100 text-sm font-semibold",
+            data: { turbo_frame: "_top" } %>
+      <%= button_to "Zatwierdź i rozpocznij",
+            approve_focus_group_path(focus_group),
+            method: :post,
+            class: "px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-sm font-semibold",
+            data: { turbo_frame: "_top" } %>
+    </div>
+  </div>
+<% end %>
+
+<% if in_progress_bar %>
   <div class="mb-6 bg-white p-4 rounded shadow border border-gray-200">
     <% percent = (focus_group.progress * 100).round %>
     <% label = case focus_group.status
@@ -39,14 +72,28 @@
   <div class="space-y-3">
     <% personas.each do |persona| %>
       <details class="bg-white rounded shadow border border-gray-200 group">
-        <summary class="px-4 py-3 cursor-pointer flex items-center justify-between">
-          <div>
+        <summary class="px-4 py-3 cursor-pointer flex items-center justify-between gap-3">
+          <div class="min-w-0">
             <span class="font-semibold"><%= persona.name %></span>
             <span class="text-sm text-gray-600 ml-2">
-              <%= [persona.demographics["wiek"], persona.demographics["miasto"], persona.demographics["zawod"]].compact.join(" · ") %>
+              <%= [persona.demographics&.dig("wiek"), persona.demographics&.dig("miasto"), persona.demographics&.dig("zawod")].compact.join(" · ") %>
             </span>
           </div>
-          <span class="text-xs text-gray-500"><%= persona.llm_model %></span>
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="text-xs text-gray-500"><%= persona.llm_model %></span>
+            <% if awaiting %>
+              <%= link_to "Edytuj",
+                    edit_focus_group_persona_path(focus_group, persona),
+                    class: "px-2 py-1 text-xs bg-gray-100 border border-gray-300 rounded hover:bg-gray-200",
+                    data: { turbo_frame: "_top" } %>
+              <% confirm_msg = "Usunąć personę „#{persona.name}”?" %>
+              <%= button_to "Usuń",
+                    focus_group_persona_path(focus_group, persona),
+                    method: :delete,
+                    form: { data: { turbo_confirm: confirm_msg, turbo_frame: "_top" } },
+                    class: "px-2 py-1 text-xs bg-red-50 border border-red-300 text-red-800 rounded hover:bg-red-100" %>
+            <% end %>
+          </div>
         </summary>
         <div class="px-4 pb-4 space-y-3">
           <p class="text-sm text-gray-700 whitespace-pre-wrap"><%= persona.description %></p>

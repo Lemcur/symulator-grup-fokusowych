@@ -28,6 +28,12 @@ class GeneratePersonasJob < ApplicationJob
       )
     end
 
+    if focus_group.require_persona_review?
+      focus_group.update!(status: :awaiting_review)
+      Rails.logger.info "[GeneratePersonasJob] FocusGroup #{focus_group.id} — #{slots.size} person gotowych, status → awaiting_review"
+      return
+    end
+
     focus_group.update!(status: :collecting_opinions)
     Rails.logger.info "[GeneratePersonasJob] FocusGroup #{focus_group.id} — #{slots.size} person gotowych, status → collecting_opinions"
 

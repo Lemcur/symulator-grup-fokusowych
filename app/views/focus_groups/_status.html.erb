@@ -1,6 +1,6 @@
-<% in_progress = !(focus_group.completed? || focus_group.failed?) %>
+<% polling = !(focus_group.completed? || focus_group.failed? || focus_group.awaiting_review?) %>
 
 <%= turbo_frame_tag "session_status",
-      data: (in_progress ? { controller: "poll", poll_url_value: status_focus_group_path(focus_group), poll_interval_ms_value: 3000 } : {}) do %>
+      data: (polling ? { controller: "poll", poll_url_value: status_focus_group_path(focus_group), poll_interval_ms_value: 3000 } : {}) do %>
   <%= render "status_body", focus_group: focus_group %>
 <% end %>

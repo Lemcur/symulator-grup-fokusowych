@@ -1,5 +1,5 @@
 class FocusGroupsController < ApplicationController
-  before_action :set_focus_group, only: [:show, :status]
+  before_action :set_focus_group, only: [:show, :status, :approve]
 
   def index
     @focus_groups = current_user.focus_groups.includes(:product).order(created_at: :desc)
@@ -10,6 +10,20 @@ class FocusGroupsController < ApplicationController
 
   def status
     render partial: "status", locals: { focus_group: @focus_group }
+  end
+
+  def approve
+    unless @focus_group.awaiting_review?
+      redirect_to @focus_group, alert: "Sesja nie jest w stanie oczekiwania na zatwierdzenie person." and return
+    end
+
+    if @focus_group.personas.empty?
+      redirect_to @focus_group, alert: "Nie można zatwierdzić pustej grupy — dodaj co najmniej jedną personę." and return
+    end
+
+    @focus_group.update!(status: :collecting_opinions)
+    @focus_group.personas.each { |p| CollectOpinionJob.perform_later(p.id) }
+    redirect_to @focus_group, notice: "Persony zatwierdzone. Zbieranie opinii rozpoczęte."
   end
 
   def new
@@ -45,14 +59,16 @@ class FocusGroupsController < ApplicationController
 
   def focus_group_params
     params.require(:focus_group).permit(
-      :name, :product_id, :sample_size, :generation_mode,
-      :persona_generator, :target_demographics
+      :name, :product_id, :sample_size,
+      :persona_generator, :target_demographics, :require_persona_review
     )
   end
 
   def focus_group_attributes
     attrs = focus_group_params.to_h.except("product_id", "target_demographics")
-    attrs["target_demographics"] = parsed_target_demographics
+    parsed = parsed_target_demographics
+    attrs["target_demographics"] = parsed
+    attrs["generation_mode"] = parsed.is_a?(Array) ? "slots" : "proportions"
     attrs
   end
 
