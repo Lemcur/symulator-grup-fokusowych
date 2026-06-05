@@ -30,12 +30,12 @@ class GeneratePersonasJob < ApplicationJob
 
     if focus_group.require_persona_review?
       focus_group.update!(status: :awaiting_review)
-      Rails.logger.info "[GeneratePersonasJob] FocusGroup #{focus_group.id} — #{slots.size} person gotowych, status → awaiting_review"
+      Rails.logger.info "[GeneratePersonasJob] FocusGroup #{focus_group.id} - #{slots.size} person gotowych, status → awaiting_review"
       return
     end
 
     focus_group.update!(status: :collecting_opinions)
-    Rails.logger.info "[GeneratePersonasJob] FocusGroup #{focus_group.id} — #{slots.size} person gotowych, status → collecting_opinions"
+    Rails.logger.info "[GeneratePersonasJob] FocusGroup #{focus_group.id} - #{slots.size} person gotowych, status → collecting_opinions"
 
     focus_group.personas.each do |persona|
       CollectOpinionJob.perform_later(persona.id)
@@ -56,7 +56,7 @@ class GeneratePersonasJob < ApplicationJob
       DOTYCHCZAS ZAPROJEKTOWANI UCZESTNICY GRUPY (#{personas.size}/#{focus_group.sample_size}):
       #{lines.join("\n")}
 
-      Zaprojektuj kogoś WYRAŹNIE INNEGO od powyższych — inne imię (nie powtarzaj nazwisk),
+      Zaprojektuj kogoś WYRAŹNIE INNEGO od powyższych - inne imię (nie powtarzaj nazwisk),
       inne miasto jeśli to możliwe, inny typ zawodu, inny styl komunikacji.
       Grupa fokusowa potrzebuje różnorodnych perspektyw.
     CONTEXT

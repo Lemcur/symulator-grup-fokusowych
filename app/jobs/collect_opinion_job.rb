@@ -21,7 +21,7 @@ class CollectOpinionJob < ApplicationJob
 
     return if rows.zero?
 
-    Rails.logger.info "[CollectOpinionJob] FocusGroup #{focus_group.id} — wszystkie round=0 opinie zebrane, status → deliberating"
+    Rails.logger.info "[CollectOpinionJob] FocusGroup #{focus_group.id} - wszystkie round=0 opinie zebrane, status → deliberating"
 
     focus_group.personas.each do |persona|
       DeliberateJob.perform_later(persona.id)

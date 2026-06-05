@@ -1,10 +1,10 @@
 module PersonaGenerators
   class LlmTwoPassRefine < Base
     FEW_SHOT_EXAMPLES = <<~EXAMPLES
-      PRZYKŁAD 1 — DOBRZE napisana persona:
+      PRZYKŁAD 1 - DOBRZE napisana persona:
       {
         "name": "Anna Kowalska",
-        "description": "28-letnia specjalistka ds. marketingu w warszawskiej agencji. Mieszka z partnerem na Mokotowie. Próbuje od dwóch lat opanować hiszpański — kupiła kilka kursów, żaden nie wszedł jej w nawyk. Trochę się tego wstydzi.",
+        "description": "28-letnia specjalistka ds. marketingu w warszawskiej agencji. Mieszka z partnerem na Mokotowie. Próbuje od dwóch lat opanować hiszpański - kupiła kilka kursów, żaden nie wszedł jej w nawyk. Trochę się tego wstydzi.",
         "demographics": {
           "wiek": "25-29",
           "plec": "kobieta",
@@ -20,7 +20,7 @@ module PersonaGenerators
         }
       }
 
-      PRZYKŁAD 2 — DOBRZE napisana persona:
+      PRZYKŁAD 2 - DOBRZE napisana persona:
       {
         "name": "Marek Szymański",
         "description": "42-letni kierownik logistyki w firmie spedycyjnej pod Łodzią. Żona, dwoje dzieci (8 i 12 lat). Awansował dwa lata temu, podstawowy angielski ledwo wystarcza mu na maile z dostawcami z Niemiec. Wieczorami zmęczony, ale szef coraz częściej zwraca uwagę.",
@@ -34,7 +34,7 @@ module PersonaGenerators
         "traits": {
           "wartosci": ["bezpieczeństwo finansowe", "rodzina", "praktyczność"],
           "lifestyle": "Praca 8-18, weekendy z rodziną. Czasem trening piłki nożnej. Telefon głównie do połączeń i WhatsAppa.",
-          "obawy_zakupowe": ["nie mam czasu na naukę 30 min dziennie", "wątpię czy app nauczy mnie tego co potrzebuję — terminologii spedycyjnej"],
+          "obawy_zakupowe": ["nie mam czasu na naukę 30 min dziennie", "wątpię czy app nauczy mnie tego co potrzebuję - terminologii spedycyjnej"],
           "styl_komunikacji": "Konkretny, oszczędny, sceptyczny"
         }
       }
@@ -68,23 +68,23 @@ module PersonaGenerators
     end
 
     def generation_prompt(focus_group, slot_demographics, previous_context)
+      brief_block = focus_group.brief_summary.present? ? "OPIS DOCELOWEJ GRUPY (od badacza):\n#{focus_group.brief_summary}\n\n" : ""
+      slot_block = slot_demographics.any? ? "OGRANICZENIA DEMOGRAFICZNE (MUSISZ ZACHOWAĆ):\n#{format_slot(slot_demographics)}\n\n" : "OGRANICZENIA DEMOGRAFICZNE: brak - dobierz demografię samodzielnie zgodnie z opisem grupy.\n\n"
+
       <<~PROMPT
         Jesteś projektantem person badawczych dla polskiej grupy fokusowej.
 
         PRODUKT: #{focus_group.product.name}
         OPIS PRODUKTU: #{focus_group.product.description}
 
-        OGRANICZENIA DEMOGRAFICZNE (MUSISZ ZACHOWAĆ):
-        #{format_slot(slot_demographics)}
-
-        #{previous_context}
+        #{brief_block}#{slot_block}#{previous_context}
 
         PRZYKŁADY DOBRZE NAPISANYCH PERSON (do naśladowania stylu i głębokości):
         #{FEW_SHOT_EXAMPLES}
 
         Wymyśl JEDNĄ realistyczną personę zgodną z ograniczeniami demograficznymi.
         WAŻNE:
-        - nie idealizuj — persony mają wady, mieszane uczucia, ograniczenia budżetowe
+        - nie idealizuj - persony mają wady, mieszane uczucia, ograniczenia budżetowe
         - konkretne miasto, zawód, kontekst życiowy (nie ogólnie "pracuje w korpo")
         - opisuj językiem prawdopodobnym dla tej osoby (kierownik logistyki z Łodzi mówi inaczej niż Marketing Specialist z Warszawy)
         - zachowaj proporcje: 3-4 zdania backstory, 3-5 wartości, 2-3 obawy zakupowe

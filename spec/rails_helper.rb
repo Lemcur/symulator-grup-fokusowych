@@ -73,14 +73,11 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
-  # factory_bot — pozwala wołać create(:user) zamiast FactoryBot.create(:user)
   config.include FactoryBot::Syntax::Methods
 
-  # Devise test helpers dla request/system specs
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.include Devise::Test::IntegrationHelpers, type: :system
 
-  # Custom sign_in! helper (zob. spec/support/auth_helpers.rb)
   config.include AuthHelpers, type: :request
   config.include AuthHelpers, type: :system
 

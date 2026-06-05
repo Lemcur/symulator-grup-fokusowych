@@ -23,13 +23,13 @@
       <div>
         <%= f.label :name, "Nazwa sesji", class: "block font-semibold mb-1" %>
         <%= f.text_field :name, class: "w-full px-3 py-2 border border-gray-300 rounded",
-              placeholder: "Pilot — kobiety 25-34, miasta" %>
+              placeholder: "Pilot - kobiety 25-34, miasta" %>
       </div>
 
       <div>
         <%= f.label :product_id, "Produkt", class: "block font-semibold mb-1" %>
         <%= f.collection_select :product_id, @products, :id, :name,
-              { prompt: "— wybierz produkt —" },
+              { prompt: "- wybierz produkt -" },
               class: "w-full px-3 py-2 border border-gray-300 rounded" %>
       </div>
 
@@ -53,21 +53,53 @@
         <div>
           <%= f.label :require_persona_review, "Przejrzyj persony przed dyskusją", class: "font-semibold" %>
           <p class="text-xs text-gray-600">
-            Po wygenerowaniu sesja zatrzyma się — będziesz mógł usunąć, edytować lub dodać persony przed zbieraniem opinii.
+            Po wygenerowaniu sesja zatrzyma się - będziesz mógł usunąć, edytować lub dodać persony przed zbieraniem opinii.
           </p>
         </div>
       </div>
 
-      <div>
-        <%= f.label :target_demographics, "Target demographics (JSON)", class: "block font-semibold mb-1" %>
-        <%= f.text_area :target_demographics,
-              value: (@focus_group.target_demographics.is_a?(String) ? @focus_group.target_demographics : JSON.pretty_generate(@focus_group.target_demographics || {})),
-              rows: 10,
-              class: "w-full px-3 py-2 border border-gray-300 rounded font-mono text-sm" %>
-        <p class="text-xs text-gray-500 mt-1">
-          Format zależy od trybu — proportions: <code>{"wiek": {"25-29": 0.5, ...}, ...}</code>;
-          slots: <code>[{"count": 5, "wiek": "25-29", ...}, ...]</code>.
-        </p>
+      <% has_json = @focus_group.target_demographics.present? && @focus_group.target_demographics != {} %>
+      <% initial_mode = has_json ? "json" : "brief" %>
+
+      <div data-controller="spec-toggle" data-spec-toggle-mode-value="<%= initial_mode %>">
+        <label class="block font-semibold mb-2">Specyfikacja grupy</label>
+        <div class="flex gap-4 mb-3 text-sm">
+          <label class="flex items-center gap-2">
+            <input type="radio" name="spec_mode" value="brief"
+                   <%= "checked" if initial_mode == "brief" %>
+                   data-action="spec-toggle#switch"
+                   data-spec-toggle-target="radio">
+            <span>Opis tekstowy</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="radio" name="spec_mode" value="json"
+                   <%= "checked" if initial_mode == "json" %>
+                   data-action="spec-toggle#switch"
+                   data-spec-toggle-target="radio">
+            <span>Zaawansowane (JSON)</span>
+          </label>
+        </div>
+
+        <div data-spec-toggle-target="brief" class="<%= "hidden" if initial_mode != "brief" %>">
+          <%= f.text_area :brief_summary,
+                rows: 6,
+                placeholder: "Np. Kobiety 25-34 z dużych polskich miast, raczej z wyższym wykształceniem, zainteresowane nauką języków obcych. Pracujące zawodowo, zarobki średnie i wyższe.",
+                class: "w-full px-3 py-2 border border-gray-300 rounded" %>
+          <p class="text-xs text-gray-500 mt-1">
+            Opisz docelową grupę swobodnym tekstem - LLM uzupełni demografię.
+          </p>
+        </div>
+
+        <div data-spec-toggle-target="json" class="<%= "hidden" if initial_mode != "json" %>">
+          <%= f.text_area :target_demographics,
+                value: (@focus_group.target_demographics.is_a?(String) ? @focus_group.target_demographics : JSON.pretty_generate(@focus_group.target_demographics || {})),
+                rows: 10,
+                class: "w-full px-3 py-2 border border-gray-300 rounded font-mono text-sm" %>
+          <p class="text-xs text-gray-500 mt-1">
+            Hash rozkładów: <code>{"wiek": {"25-29": 0.5, ...}, ...}</code>;
+            tablica slotów: <code>[{"count": 5, "wiek": "25-29", ...}, ...]</code>.
+          </p>
+        </div>
       </div>
 
       <div class="flex gap-2 pt-2">

@@ -38,9 +38,9 @@ module OpinionCollectors
         Twoje zadanie: WYPOWIEDZ SIĘ na temat tego produktu zgodnie z osobowością z brief'u powyżej.
 
         - Oceń produkt w skali 1-5 (1=zdecydowanie nie kupię/nie użyję, 5=zdecydowanie tak)
-        - Wymień konkretne PLUSY ważne dla CIEBIE — nie ogólne ("dobra aplikacja"), tylko specyficzne ("po godzinach mam tylko 15 minut zanim zasnę")
+        - Wymień konkretne PLUSY ważne dla CIEBIE - nie ogólne ("dobra aplikacja"), tylko specyficzne ("po godzinach mam tylko 15 minut zanim zasnę")
         - Wymień konkretne MINUSY / obawy / zastrzeżenia jakie masz wobec tego produktu
-        - Daj jeden charakterystyczny CYTAT w pierwszej osobie — coś co naprawdę powiedziałabyś/powiedziałbyś o tym produkcie
+        - Daj jeden charakterystyczny CYTAT w pierwszej osobie - coś co naprawdę powiedziałabyś/powiedziałbyś o tym produkcie
 
         Mów stylu komunikacji typowym dla swojej osoby. Możesz być sceptyczny/sceptyczna. Nie idealizuj.
 

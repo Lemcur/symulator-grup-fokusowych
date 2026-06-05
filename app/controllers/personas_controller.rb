@@ -4,11 +4,15 @@ class PersonasController < ApplicationController
   before_action :set_persona, only: [:edit, :update, :destroy]
 
   def new
-    @persona = @focus_group.personas.build
+    @persona = @focus_group.personas.build(
+      demographics: demographics_template,
+      traits: traits_template
+    )
   end
 
   def create
     @persona = @focus_group.personas.build(persona_attributes)
+    assign_llm_provenance(@persona)
 
     if @persona.save
       redirect_to @focus_group, notice: "Persona dodana."
@@ -66,5 +70,31 @@ class PersonasController < ApplicationController
     JSON.parse(raw)
   rescue JSON::ParserError
     raw
+  end
+
+  def assign_llm_provenance(persona)
+    split = GeneratePersonasJob::MODEL_SPLIT
+    model = split[@focus_group.personas.count % split.size]
+    persona.llm_model    = model
+    persona.llm_provider = LlmClient::PROVIDER_BY_MODEL[model].to_s
+  end
+
+  def demographics_template
+    {
+      "wiek" => "",
+      "plec" => "",
+      "miejsce_zamieszkania" => "",
+      "miasto" => "",
+      "zawod" => ""
+    }
+  end
+
+  def traits_template
+    {
+      "wartosci" => [],
+      "lifestyle" => "",
+      "obawy_zakupowe" => [],
+      "styl_komunikacji" => ""
+    }
   end
 end

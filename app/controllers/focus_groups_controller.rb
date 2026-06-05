@@ -18,7 +18,7 @@ class FocusGroupsController < ApplicationController
     end
 
     if @focus_group.personas.empty?
-      redirect_to @focus_group, alert: "Nie można zatwierdzić pustej grupy — dodaj co najmniej jedną personę." and return
+      redirect_to @focus_group, alert: "Nie można zatwierdzić pustej grupy - dodaj co najmniej jedną personę." and return
     end
 
     @focus_group.update!(status: :collecting_opinions)
@@ -59,7 +59,7 @@ class FocusGroupsController < ApplicationController
 
   def focus_group_params
     params.require(:focus_group).permit(
-      :name, :product_id, :sample_size,
+      :name, :product_id, :sample_size, :brief_summary,
       :persona_generator, :target_demographics, :require_persona_review
     )
   end
@@ -74,7 +74,7 @@ class FocusGroupsController < ApplicationController
 
   def parsed_target_demographics
     raw = focus_group_params[:target_demographics]
-    return default_target_demographics if raw.blank?
+    return {} if raw.blank? || params[:spec_mode] == "brief"
 
     JSON.parse(raw)
   rescue JSON::ParserError

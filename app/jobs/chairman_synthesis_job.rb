@@ -17,6 +17,6 @@ class ChairmanSynthesisJob < ApplicationJob
     ChairmanServices::LlmSynthesize.new(model: CHAIRMAN_MODEL).call(focus_group: focus_group)
 
     focus_group.update!(status: :completed, completed_at: Time.current)
-    Rails.logger.info "[ChairmanSynthesisJob] FocusGroup #{focus_group.id} — rekomendacja wygenerowana, status → completed"
+    Rails.logger.info "[ChairmanSynthesisJob] FocusGroup #{focus_group.id} - rekomendacja wygenerowana, status: completed"
   end
 end

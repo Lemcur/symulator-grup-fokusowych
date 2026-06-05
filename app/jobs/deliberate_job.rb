@@ -32,7 +32,7 @@ class DeliberateJob < ApplicationJob
 
     return if rows.zero?
 
-    Rails.logger.info "[DeliberateJob] FocusGroup #{focus_group.id} — wszystkie round=1 opinie zebrane, status → synthesizing"
+    Rails.logger.info "[DeliberateJob] FocusGroup #{focus_group.id} - wszystkie round=1 opinie zebrane, status → synthesizing"
     ChairmanSynthesisJob.perform_later(focus_group.id)
   end
 end

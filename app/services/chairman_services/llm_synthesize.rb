@@ -44,8 +44,8 @@ module ChairmanServices
         TWOJE ZADANIE:
         Stwórz syntetyczny raport badawczy. Pamiętaj:
         - Cytuj konkretne osoby przy insights ("Anna (Warszawa, marketing): ...")
-        - W persuasive_arguments wskaż konkretne argumenty które realnie przekonały innych do zmiany — to dane do replikacji w innych badaniach
-        - W persistent_divisions pokaż gdzie panel pozostał podzielony pomimo dyskusji — to obszary wymagające dalszego badania
+        - W persuasive_arguments wskaż konkretne argumenty które realnie przekonały innych do zmiany - to dane do replikacji w innych badaniach
+        - W persistent_divisions pokaż gdzie panel pozostał podzielony pomimo dyskusji - to obszary wymagające dalszego badania
         - W segment_insights wyciągnij wzorce między demografiami (np. "młodzi marketingowcy doceniają gamifikację, nauczyciele jej nie ufają")
         - Summary: 3-4 zdania głównego wniosku jak dla decydenta produktowego
 
@@ -55,7 +55,7 @@ module ChairmanServices
 
     def format_participants(personas)
       personas.map.with_index(1) do |p, i|
-        "#{i}. #{p.name} — #{p.demographics['wiek']}, #{p.demographics['miasto']}, #{p.demographics['zawod']}"
+        "#{i}. #{p.name} - #{p.demographics['wiek']}, #{p.demographics['miasto']}, #{p.demographics['zawod']}"
       end.join("\n")
     end
 
@@ -63,7 +63,7 @@ module ChairmanServices
       focus_group.opinions.round_one.includes(:persona).map.with_index(1) do |op, i|
         persona = op.persona
         <<~OP
-          #{i}. #{persona.name} (#{persona.demographics['miasto']}, #{persona.demographics['zawod']}) — ocena #{op.rating}/5
+          #{i}. #{persona.name} (#{persona.demographics['miasto']}, #{persona.demographics['zawod']}) - ocena #{op.rating}/5
              Plusy: #{op.pros}
              Minusy: #{op.cons}
              Cytat: "#{op.quote}"
@@ -73,7 +73,7 @@ module ChairmanServices
 
     def format_revisions(focus_group)
       revised_opinions = focus_group.opinions.round_one.where(revised: true).includes(:persona)
-      return "Brak — żaden z uczestników nie zmienił zdania po deliberacji." if revised_opinions.empty?
+      return "Brak - żaden z uczestników nie zmienił zdania po deliberacji." if revised_opinions.empty?
 
       revised_opinions.map do |op|
         own_zero = op.persona.round_zero_opinion

@@ -11,7 +11,7 @@ end
 
 puts "Product: #{product.name} (id=#{product.id})"
 
-focus_group = user.focus_groups.find_or_create_by!(name: "Pilot — kobiety 25-34, miasta") do |fg|
+focus_group = user.focus_groups.find_or_create_by!(name: "Pilot - kobiety 25-34, miasta") do |fg|
   fg.product = product
   fg.sample_size = 12
   fg.generation_mode = :proportions

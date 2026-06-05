@@ -48,9 +48,9 @@ module DeliberationServices
         Twoje zadanie: po wysłuchaniu opinii innych uczestników, ZADECYDUJ czy zmieniasz swoją opinię.
 
         ZASADY:
-        - Zmieniasz TYLKO jeśli czyjś konkretny argument naprawdę Cię przekonał — nie zmieniaj "bo wszyscy mówią"
+        - Zmieniasz TYLKO jeśli czyjś konkretny argument naprawdę Cię przekonał - nie zmieniaj "bo wszyscy mówią"
         - Możesz wzmocnić swoją pierwotną opinię jeśli ktoś podał argument który potwierdził Twoje wątpliwości lub Twoje plusy
-        - Pamiętaj o swojej osobowości — osoba sceptyczna pozostaje sceptyczna chyba że ktoś podał MOCNY konkretny argument zmieniający perspektywę
+        - Pamiętaj o swojej osobowości - osoba sceptyczna pozostaje sceptyczna chyba że ktoś podał MOCNY konkretny argument zmieniający perspektywę
         - Jeśli rewidujesz: rating, pros, cons LUB quote powinny się rzeczywiście zmienić; revision_rationale wyjaśnia który argument Cię przekonał
         - Jeśli nie rewidujesz: zwróć te same wartości co w pierwotnej opinii, revised=false, revision_rationale=""
 
@@ -61,7 +61,7 @@ module DeliberationServices
     def format_peer_opinions(peer_opinions)
       peer_opinions.map.with_index(1) do |op, i|
         <<~PEER
-          #{i}. #{op.persona.name} (#{op.persona.demographics['miasto']}, #{op.persona.demographics['zawod']}) — ocena #{op.rating}/5
+          #{i}. #{op.persona.name} (#{op.persona.demographics['miasto']}, #{op.persona.demographics['zawod']}) - ocena #{op.rating}/5
              Plusy: #{op.pros}
              Minusy: #{op.cons}
              Cytat: "#{op.quote}"
