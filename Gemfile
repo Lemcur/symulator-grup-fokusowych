@@ -45,7 +45,6 @@ gem "devise"
 # Background jobs
 gem "sidekiq"
 
-# LLM client — multi-provider, używamy z OpenRouter
 gem "ruby_llm"
 
 # Env vars from .env

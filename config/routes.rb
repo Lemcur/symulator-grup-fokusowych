@@ -7,7 +7,9 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => "/sidekiq"
   end
 
-  resources :products
+  resources :products do
+    resources :images, only: :destroy, controller: "product_images"
+  end
   resources :focus_groups do
     member do
       get :status
