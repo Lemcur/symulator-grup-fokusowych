@@ -13,7 +13,11 @@ class ProductsController < ApplicationController
   end
 
   def create
-    @product = current_user.products.build(product_params)
+    attrs = product_params
+    new_images = Array(attrs.delete(:images)).reject(&:blank?)
+
+    @product = current_user.products.build(attrs)
+    @product.images.attach(new_images) if new_images.any?
 
     if @product.save
       redirect_to @product, notice: "Produkt utworzony."
@@ -26,7 +30,13 @@ class ProductsController < ApplicationController
   end
 
   def update
-    if @product.update(product_params)
+    attrs = product_params
+    new_images = Array(attrs.delete(:images)).reject(&:blank?)
+
+    @product.assign_attributes(attrs)
+    @product.images.attach(new_images) if new_images.any?
+
+    if @product.save
       redirect_to @product, notice: "Produkt zaktualizowany."
     else
       render :edit, status: :unprocessable_entity
