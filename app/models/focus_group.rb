@@ -1,4 +1,64 @@
 class FocusGroup < ApplicationRecord
+  DEMOGRAPHIC_SCHEMA = {
+    "wiek" => {
+      label: "Wiek",
+      buckets: ["18-24", "25-34", "35-44", "45-54", "55-64", "65+"]
+    },
+    "plec" => {
+      label: "Płeć",
+      buckets: ["kobieta", "mezczyzna", "inna"]
+    },
+    "status_zawodowy" => {
+      label: "Status zawodowy",
+      buckets: [
+        "pracujacy",
+        "wlasna_dzialalnosc",
+        "bezrobotny",
+        "student",
+        "emeryt",
+        "urlop_macierzynski",
+        "urlop_wychowawczy"
+      ]
+    },
+    "wyksztalcenie" => {
+      label: "Wykształcenie",
+      buckets: [
+        "podstawowe",
+        "zawodowe",
+        "srednie",
+        "wyzsze_licencjat",
+        "wyzsze_magister",
+        "wyzsze_doktorat"
+      ]
+    },
+    "dochod" => {
+      label: "Dochód (netto/mies.)",
+      buckets: [
+        "ponizej_3000",
+        "3000_5000",
+        "5000_8000",
+        "8000_12000",
+        "powyzej_12000"
+      ]
+    },
+    "sytuacja_rodzinna" => {
+      label: "Sytuacja rodzinna",
+      buckets: [
+        "singiel",
+        "w_zwiazku_bez_dzieci",
+        "w_zwiazku_male_dzieci",
+        "w_zwiazku_dzieci_szkolne",
+        "w_zwiazku_dorosle_dzieci",
+        "samotny_rodzic",
+        "owdowialy"
+      ]
+    },
+    "miejsce_zamieszkania" => {
+      label: "Miejsce zamieszkania",
+      buckets: ["wies", "male_miasto", "srednie_miasto", "duze_miasto"]
+    }
+  }.freeze
+
   belongs_to :product
   belongs_to :user
 

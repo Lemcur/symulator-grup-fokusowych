@@ -69,6 +69,7 @@ module PersonaGenerators
 
     def generation_prompt(focus_group, slot_demographics, previous_context)
       brief_block = focus_group.brief_summary.present? ? "OPIS DOCELOWEJ GRUPY (od badacza):\n#{focus_group.brief_summary}\n\n" : ""
+      requirements_block = focus_group.additional_requirements.present? ? "WYMAGANIA DODATKOWE (kompetencje i kryteria wykluczające - KAŻDA persona musi je spełniać):\n#{focus_group.additional_requirements}\n\n" : ""
       slot_block = slot_demographics.any? ? "OGRANICZENIA DEMOGRAFICZNE (MUSISZ ZACHOWAĆ):\n#{format_slot(slot_demographics)}\n\n" : "OGRANICZENIA DEMOGRAFICZNE: brak - dobierz demografię samodzielnie zgodnie z opisem grupy.\n\n"
 
       <<~PROMPT
@@ -77,7 +78,7 @@ module PersonaGenerators
         PRODUKT: #{focus_group.product.name}
         OPIS PRODUKTU: #{focus_group.product.description}
 
-        #{brief_block}#{slot_block}#{previous_context}
+        #{brief_block}#{requirements_block}#{slot_block}#{previous_context}
 
         PRZYKŁADY DOBRZE NAPISANYCH PERSON (do naśladowania stylu i głębokości):
         #{FEW_SHOT_EXAMPLES}

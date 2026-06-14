@@ -58,12 +58,11 @@
         </div>
       </div>
 
-      <% has_json = @focus_group.target_demographics.present? && @focus_group.target_demographics != {} %>
-      <% initial_mode = has_json ? "json" : "brief" %>
+      <% initial_mode = "structured" %>
 
       <div data-controller="spec-toggle" data-spec-toggle-mode-value="<%= initial_mode %>">
         <label class="block font-semibold mb-2">Specyfikacja grupy</label>
-        <div class="flex gap-4 mb-3 text-sm">
+        <div class="flex flex-wrap gap-4 mb-3 text-sm">
           <label class="flex items-center gap-2">
             <input type="radio" name="spec_mode" value="brief"
                    <%= "checked" if initial_mode == "brief" %>
@@ -72,11 +71,18 @@
             <span>Opis tekstowy</span>
           </label>
           <label class="flex items-center gap-2">
+            <input type="radio" name="spec_mode" value="structured"
+                   <%= "checked" if initial_mode == "structured" %>
+                   data-action="spec-toggle#switch"
+                   data-spec-toggle-target="radio">
+            <span>Demografia strukturyzowana</span>
+          </label>
+          <label class="flex items-center gap-2">
             <input type="radio" name="spec_mode" value="json"
                    <%= "checked" if initial_mode == "json" %>
                    data-action="spec-toggle#switch"
                    data-spec-toggle-target="radio">
-            <span>Zaawansowane (JSON)</span>
+            <span>Eksperckie (JSON)</span>
           </label>
         </div>
 
@@ -90,16 +96,61 @@
           </p>
         </div>
 
+        <div data-spec-toggle-target="structured" class="<%= "hidden" if initial_mode != "structured" %> space-y-4">
+          <p class="text-xs text-gray-500">
+            Przypisz każdej kategorii wagę (0-5). 0 = pomijamy, wyższa waga = większy udział w próbie. System znormalizuje wagi do proporcji w obrębie każdego wymiaru. Wymiar z samymi zerami zostaje pominięty.
+          </p>
+
+          <% FocusGroup::DEMOGRAPHIC_SCHEMA.each do |dimension, config| %>
+            <div class="border border-gray-200 rounded p-3"
+                 data-controller="demographic-slider"
+                 data-demographic-slider-dimension-value="<%= dimension %>">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-semibold text-sm"><%= config[:label] %></span>
+                <span class="text-xs text-gray-400" data-demographic-slider-target="sum">
+                  Suma wag: 0
+                </span>
+              </div>
+              <div class="space-y-1.5">
+                <% config[:buckets].each do |bucket| %>
+                  <label class="flex items-center gap-3 text-sm">
+                    <span class="w-44 text-gray-700"><%= bucket.tr("_", " ") %></span>
+                    <input type="number"
+                           min="0" max="5" step="1" value="0"
+                           name="focus_group[structured_demographics][<%= dimension %>][<%= bucket %>]"
+                           data-action="input->demographic-slider#update change->demographic-slider#update"
+                           data-demographic-slider-target="slider"
+                           class="w-16 px-2 py-1 border border-gray-300 rounded text-center tabular-nums">
+                    <span class="w-12 text-right text-xs text-gray-400 tabular-nums"
+                          data-demographic-slider-target="value">0%</span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
         <div data-spec-toggle-target="json" class="<%= "hidden" if initial_mode != "json" %>">
           <%= f.text_area :target_demographics,
                 value: (@focus_group.target_demographics.is_a?(String) ? @focus_group.target_demographics : JSON.pretty_generate(@focus_group.target_demographics || {})),
                 rows: 10,
                 class: "w-full px-3 py-2 border border-gray-300 rounded font-mono text-sm" %>
           <p class="text-xs text-gray-500 mt-1">
-            Hash rozkładów: <code>{"wiek": {"25-29": 0.5, ...}, ...}</code>;
-            tablica slotów: <code>[{"count": 5, "wiek": "25-29", ...}, ...]</code>.
+            Hash rozkładów: <code>{"wiek": {"25-34": 0.5, ...}, ...}</code>;
+            tablica slotów: <code>[{"count": 5, "wiek": "25-34", ...}, ...]</code>.
           </p>
         </div>
+      </div>
+
+      <div>
+        <%= f.label :additional_requirements, "Wymagania dodatkowe (kompetencje i wykluczenia)", class: "block font-semibold mb-1" %>
+        <%= f.text_area :additional_requirements,
+              rows: 4,
+              placeholder: "Np. Wszystkie persony muszą mieć doświadczenie z bankowością mobilną. Wykluczone osoby pracujące w branży marketingowej lub badaniach rynku.",
+              class: "w-full px-3 py-2 border border-gray-300 rounded" %>
+        <p class="text-xs text-gray-500 mt-1">
+          Kryteria, które każda persona musi (lub nie może) spełniać - poza demografią.
+        </p>
       </div>
 
       <div class="flex gap-2 pt-2">

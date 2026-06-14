@@ -31,19 +31,21 @@ class FocusGroupsController < ApplicationController
       sample_size: 12,
       generation_mode: "proportions",
       persona_generator: "llm_two_pass",
-      target_demographics: default_target_demographics
+      target_demographics: {}
     )
     @products = current_user.products.order(:name)
   end
 
   def create
-    product = current_user.products.find(focus_group_params[:product_id])
-    @focus_group = product.focus_groups.build(focus_group_attributes.merge(user: current_user))
+    @focus_group = current_user.focus_groups.build(focus_group_attributes)
+    @focus_group.product = current_user.products.find_by(id: focus_group_params[:product_id])
 
-    if @focus_group.save
+    if structured_dimensions_complete? && @focus_group.save
       GeneratePersonasJob.perform_later(@focus_group.id)
       redirect_to @focus_group, notice: "Sesja utworzona. Generowanie person rozpoczęte."
     else
+      @focus_group.valid? if @focus_group.errors.empty?
+      add_structured_dimension_errors
       @products = current_user.products.order(:name)
       render :new, status: :unprocessable_entity
     end
@@ -58,14 +60,17 @@ class FocusGroupsController < ApplicationController
   end
 
   def focus_group_params
+    permitted_dimensions = FocusGroup::DEMOGRAPHIC_SCHEMA.transform_values { |d| d[:buckets] }
     params.require(:focus_group).permit(
-      :name, :product_id, :sample_size, :brief_summary,
-      :persona_generator, :target_demographics, :require_persona_review
+      :name, :product_id, :sample_size, :brief_summary, :additional_requirements,
+      :persona_generator, :require_persona_review,
+      :target_demographics,
+      structured_demographics: permitted_dimensions
     )
   end
 
   def focus_group_attributes
-    attrs = focus_group_params.to_h.except("product_id", "target_demographics")
+    attrs = focus_group_params.to_h.except("product_id", "target_demographics", "structured_demographics")
     parsed = parsed_target_demographics
     attrs["target_demographics"] = parsed
     attrs["generation_mode"] = parsed.is_a?(Array) ? "slots" : "proportions"
@@ -73,19 +78,57 @@ class FocusGroupsController < ApplicationController
   end
 
   def parsed_target_demographics
-    raw = focus_group_params[:target_demographics]
-    return {} if raw.blank? || params[:spec_mode] == "brief"
+    case params[:spec_mode]
+    when "brief"
+      {}
+    when "structured"
+      normalize_structured_demographics(focus_group_params[:structured_demographics])
+    when "json"
+      parse_raw_json(focus_group_params[:target_demographics])
+    else
+      {}
+    end
+  end
+
+  def normalize_structured_demographics(raw)
+    return {} if raw.blank?
+
+    hash = raw.respond_to?(:to_unsafe_h) ? raw.to_unsafe_h : raw.to_h
+    hash.each_with_object({}) do |(dimension, buckets), out|
+      numeric = buckets.to_h.transform_values { |v| v.to_f.clamp(0, Float::INFINITY) }
+      total = numeric.values.sum
+      next if total.zero?
+
+      normalized = numeric.transform_values { |v| v / total }.reject { |_, v| v.zero? }
+      out[dimension.to_s] = normalized unless normalized.empty?
+    end
+  end
+
+  def parse_raw_json(raw)
+    return {} if raw.blank?
 
     JSON.parse(raw)
   rescue JSON::ParserError
     raw
   end
 
-  def default_target_demographics
-    {
-      "wiek" => { "25-29" => 0.4, "30-34" => 0.6 },
-      "plec" => { "kobieta" => 1.0 },
-      "miejsce_zamieszkania" => { "duze_miasto" => 0.7, "srednie_miasto" => 0.3 }
-    }
+  def structured_dimensions_complete?
+    return true unless params[:spec_mode] == "structured"
+
+    missing_structured_dimensions.empty?
+  end
+
+  def missing_structured_dimensions
+    configured = (@focus_group.target_demographics || {}).keys.map(&:to_s)
+    FocusGroup::DEMOGRAPHIC_SCHEMA.keys - configured
+  end
+
+  def add_structured_dimension_errors
+    return unless params[:spec_mode] == "structured"
+
+    missing_structured_dimensions.each do |dim|
+      label = FocusGroup::DEMOGRAPHIC_SCHEMA[dim][:label]
+      @focus_group.errors.add(:base, "Wymiar \"#{label}\" musi mieć co najmniej jedną wagę większą od zera.")
+    end
   end
 end
